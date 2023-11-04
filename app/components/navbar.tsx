@@ -1,11 +1,15 @@
+import { SignedIn, SignedOut, UserButton } from "@clerk/remix";
+import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
+  BuildingStorefrontIcon,
   MagnifyingGlassIcon,
   ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
+
+import { NavLink } from "@remix-run/react";
 
 const navigation = {
   categories: [
@@ -89,7 +93,7 @@ const navigation = {
           imageSrc:
             "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
           imageAlt:
-            "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
+            "Three shirts in slate, white, and yellow arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
         },
       ],
       sections: [
@@ -175,7 +179,7 @@ export default function NavBar() {
                 <div className="flex px-4 pb-2 pt-5">
                   <button
                     type="button"
-                    className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+                    className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-slate-400"
                     onClick={() => setOpen(false)}
                   >
                     <span className="absolute -inset-0.5" />
@@ -186,7 +190,7 @@ export default function NavBar() {
 
                 {/* Links */}
                 <Tab.Group as="div" className="mt-2">
-                  <div className="border-b border-gray-200">
+                  <div className="border-b border-slate-200">
                     <Tab.List className="-mb-px flex space-x-8 px-4">
                       {navigation.categories.map((category) => (
                         <Tab
@@ -194,8 +198,8 @@ export default function NavBar() {
                           className={({ selected }) =>
                             classNames(
                               selected
-                                ? "border-indigo-600 text-indigo-600"
-                                : "border-transparent text-gray-900",
+                                ? "border-yellow-600 text-yellow-600"
+                                : "border-transparent text-slate-900",
                               "flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium"
                             )
                           }
@@ -217,7 +221,7 @@ export default function NavBar() {
                               key={item.name}
                               className="group relative text-sm"
                             >
-                              <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                              <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-slate-100 group-hover:opacity-75">
                                 <img
                                   src={item.imageSrc}
                                   alt={item.imageAlt}
@@ -226,7 +230,7 @@ export default function NavBar() {
                               </div>
                               <a
                                 href={item.href}
-                                className="mt-6 block font-medium text-gray-900"
+                                className="mt-6 block font-medium text-slate-900"
                               >
                                 <span
                                   className="absolute inset-0 z-10"
@@ -244,7 +248,7 @@ export default function NavBar() {
                           <div key={section.name}>
                             <p
                               id={`${category.id}-${section.id}-heading-mobile`}
-                              className="font-medium text-gray-900"
+                              className="font-medium text-slate-900"
                             >
                               {section.name}
                             </p>
@@ -256,7 +260,7 @@ export default function NavBar() {
                                 <li key={item.name} className="flow-root">
                                   <a
                                     href={item.href}
-                                    className="-m-2 block p-2 text-gray-500"
+                                    className="-m-2 block p-2 text-slate-500"
                                   >
                                     {item.name}
                                   </a>
@@ -270,12 +274,12 @@ export default function NavBar() {
                   </Tab.Panels>
                 </Tab.Group>
 
-                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                <div className="space-y-6 border-t border-slate-200 px-4 py-6">
                   {navigation.pages.map((page) => (
                     <div key={page.name} className="flow-root">
                       <a
                         href={page.href}
-                        className="-m-2 block p-2 font-medium text-gray-900"
+                        className="-m-2 block p-2 font-medium text-slate-900"
                       >
                         {page.name}
                       </a>
@@ -283,34 +287,34 @@ export default function NavBar() {
                   ))}
                 </div>
 
-                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                <div className="space-y-6 border-t border-slate-200 px-4 py-6">
                   <div className="flow-root">
-                    <a
-                      href="#"
-                      className="-m-2 block p-2 font-medium text-gray-900"
+                    <NavLink
+                      to="/sign-in"
+                      className="-m-2 block p-2 font-medium text-slate-900"
                     >
                       Sign in
-                    </a>
+                    </NavLink>
                   </div>
                   <div className="flow-root">
-                    <a
-                      href="#"
-                      className="-m-2 block p-2 font-medium text-gray-900"
+                    <NavLink
+                      to="/sign-up"
+                      className="-m-2 block p-2 font-medium text-slate-900"
                     >
                       Create account
-                    </a>
+                    </NavLink>
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 px-4 py-6">
+                <div className="border-t border-slate-200 px-4 py-6">
                   <a href="#" className="-m-2 flex items-center p-2">
                     <img
-                      src="https://tailwindui.com/img/flags/flag-canada.svg"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/800px-Flag_of_the_United_States.svg.png?20150326181342"
                       alt=""
                       className="block h-auto w-5 flex-shrink-0"
                     />
-                    <span className="ml-3 block text-base font-medium text-gray-900">
-                      CAD
+                    <span className="ml-3 block text-base font-medium text-slate-900">
+                      USD
                     </span>
                     <span className="sr-only">, change currency</span>
                   </a>
@@ -322,7 +326,7 @@ export default function NavBar() {
       </Transition.Root>
 
       <header className="relative bg-white">
-        <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+        <p className="flex h-10 items-center justify-center bg-yellow-500 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
           Get free delivery on orders over $100
         </p>
 
@@ -330,11 +334,11 @@ export default function NavBar() {
           aria-label="Top"
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-          <div className="border-b border-gray-200">
+          <div className="border-b border-slate-200">
             <div className="flex h-16 items-center">
               <button
                 type="button"
-                className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
+                className="relative rounded-md bg-white p-2 text-slate-400 lg:hidden"
                 onClick={() => setOpen(true)}
               >
                 <span className="absolute -inset-0.5" />
@@ -344,18 +348,18 @@ export default function NavBar() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
-                  <span className="sr-only">Your Company</span>
+                <NavLink to="/">
+                  <span className="sr-only">Umulash</span>
                   <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                    className="h-16 w-auto"
+                    src="/umulash_logo_2.svg"
                     alt=""
                   />
-                </a>
+                </NavLink>
               </div>
 
               {/* Flyout menus */}
-              <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
+              <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch z-50">
                 <div className="flex h-full space-x-8">
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className="flex">
@@ -365,8 +369,8 @@ export default function NavBar() {
                             <Popover.Button
                               className={classNames(
                                 open
-                                  ? "border-indigo-600 text-indigo-600"
-                                  : "border-transparent text-gray-700 hover:text-gray-800",
+                                  ? "border-yellow-600 text-yellow-600"
+                                  : "border-transparent text-slate-700 hover:text-slate-800",
                                 "relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out"
                               )}
                             >
@@ -383,7 +387,7 @@ export default function NavBar() {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
+                            <Popover.Panel className="absolute inset-x-0 top-full text-sm text-slate-500">
                               {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
                               <div
                                 className="absolute inset-0 top-1/2 bg-white shadow"
@@ -399,7 +403,7 @@ export default function NavBar() {
                                           key={item.name}
                                           className="group relative text-base sm:text-sm"
                                         >
-                                          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                          <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-slate-100 group-hover:opacity-75">
                                             <img
                                               src={item.imageSrc}
                                               alt={item.imageAlt}
@@ -408,7 +412,7 @@ export default function NavBar() {
                                           </div>
                                           <a
                                             href={item.href}
-                                            className="mt-6 block font-medium text-gray-900"
+                                            className="mt-6 block font-medium text-slate-900"
                                           >
                                             <span
                                               className="absolute inset-0 z-10"
@@ -430,7 +434,7 @@ export default function NavBar() {
                                         <div key={section.name}>
                                           <p
                                             id={`${section.name}-heading`}
-                                            className="font-medium text-gray-900"
+                                            className="font-medium text-slate-900"
                                           >
                                             {section.name}
                                           </p>
@@ -445,7 +449,7 @@ export default function NavBar() {
                                               >
                                                 <a
                                                   href={item.href}
-                                                  className="hover:text-gray-800"
+                                                  className="hover:text-slate-800"
                                                 >
                                                   {item.name}
                                                 </a>
@@ -469,7 +473,7 @@ export default function NavBar() {
                     <a
                       key={page.name}
                       href={page.href}
-                      className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
+                      className="flex items-center text-sm font-medium text-slate-700 hover:text-slate-800"
                     >
                       {page.name}
                     </a>
@@ -478,40 +482,62 @@ export default function NavBar() {
               </Popover.Group>
 
               <div className="ml-auto flex items-center">
-                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Sign in
-                  </a>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Create account
-                  </a>
-                </div>
+                <SignedIn>
+                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                    <UserButton afterSignOutUrl="/" />
+                    <NavLink
+                      to="/seller_dashboard"
+                      className="p-2 text-slate-400 hover:text-slate-500"
+                    >
+                      <BuildingStorefrontIcon
+                        className="h-6 w-6"
+                        aria-hidden="true"
+                      />
+                    </NavLink>
+                  </div>
+                </SignedIn>
+                <SignedOut>
+                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                    <NavLink
+                      to="/sign-in"
+                      className="text-sm font-medium text-slate-700 hover:text-slate-800"
+                    >
+                      Sign in
+                    </NavLink>
+                    <span
+                      className="h-6 w-px bg-slate-200"
+                      aria-hidden="true"
+                    />
+                    <NavLink
+                      to="/sign-up"
+                      className="text-sm font-medium text-slate-700 hover:text-slate-800"
+                    >
+                      Create account
+                    </NavLink>
+                  </div>
+                </SignedOut>
 
                 <div className="hidden lg:ml-8 lg:flex">
                   <a
                     href="#"
-                    className="flex items-center text-gray-700 hover:text-gray-800"
+                    className="flex items-center text-slate-700 hover:text-slate-800"
                   >
                     <img
-                      src="https://tailwindui.com/img/flags/flag-canada.svg"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/800px-Flag_of_the_United_States.svg.png?20150326181342"
                       alt=""
                       className="block h-auto w-5 flex-shrink-0"
                     />
-                    <span className="ml-3 block text-sm font-medium">CAD</span>
+                    <span className="ml-3 block text-sm font-medium">USD</span>
                     <span className="sr-only">, change currency</span>
                   </a>
                 </div>
 
                 {/* Search */}
                 <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
+                  <a
+                    href="#"
+                    className="p-2 text-slate-400 hover:text-slate-500"
+                  >
                     <span className="sr-only">Search</span>
                     <MagnifyingGlassIcon
                       className="h-6 w-6"
@@ -524,10 +550,10 @@ export default function NavBar() {
                 <div className="ml-4 flow-root lg:ml-6">
                   <a href="#" className="group -m-2 flex items-center p-2">
                     <ShoppingBagIcon
-                      className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                      className="h-6 w-6 flex-shrink-0 text-slate-400 group-hover:text-slate-500"
                       aria-hidden="true"
                     />
-                    <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                    <span className="ml-2 text-sm font-medium text-slate-700 group-hover:text-slate-800">
                       0
                     </span>
                     <span className="sr-only">items in cart, view bag</span>

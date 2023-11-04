@@ -1,4 +1,5 @@
 import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -7,9 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 
-import NavBar from "~/components/navbar";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import styles from "./tailwind.css";
 
@@ -26,7 +25,7 @@ function Document({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="w-full h-full">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -39,7 +38,6 @@ function Document({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <Document>
-      <NavBar />
       <Outlet />
     </Document>
   );
