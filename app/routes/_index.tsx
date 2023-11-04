@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
-import { UserButton } from "@clerk/remix";
-
+import Footer from "~/components/footer";
+import NavBar from "~/components/navbar";
+import Products from "~/components/products";
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
@@ -10,10 +11,12 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <main className="mt-12">
-
-      <h1 className="text-slate-800 text-4xl font-bold">Welcome to Umulash</h1>
-      <UserButton afterSignOutUrl="/" />
-    </main>
+    <>
+      <NavBar />
+      <main>
+        <Products />
+      </main>
+      <Footer />
+    </>
   );
 }
