@@ -1,3 +1,4 @@
+import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
 import {
   Links,
   LiveReload,
@@ -6,16 +7,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 
-import type { LinksFunction } from "@remix-run/node";
+import NavBar from "~/components/navbar";
+import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import styles from "./tailwind.css";
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
-];
+export const loader: LoaderFunction = (args) => rootAuthLoader(args);
 
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
-export default function App() {
+function Document({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -25,7 +27,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
@@ -33,3 +35,15 @@ export default function App() {
     </html>
   );
 }
+
+function App() {
+  return (
+    <Document>
+      <NavBar />
+      <Outlet />
+    </Document>
+  );
+}
+
+export default ClerkApp(App);
+export const ErrorBoundary = ClerkErrorBoundary();

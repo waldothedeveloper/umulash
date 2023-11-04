@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
+import { UserButton } from "@clerk/remix";
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,9 +10,10 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <div>
-      <h1 className="text-slate-800 text-4xl font-bold">Welcome to Umulash</h1>
+    <main className="mt-12">
 
-    </div>
+      <h1 className="text-slate-800 text-4xl font-bold">Welcome to Umulash</h1>
+      <UserButton afterSignOutUrl="/" />
+    </main>
   );
 }
