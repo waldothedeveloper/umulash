@@ -1,47 +1,47 @@
-import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import { ClerkApp, ClerkErrorBoundary } from '@clerk/remix'
+import type { LinksFunction, LoaderFunction } from '@remix-run/node'
 import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+	Links,
+	LiveReload,
+	Meta,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+} from '@remix-run/react'
 
-import { rootAuthLoader } from "@clerk/remix/ssr.server";
-import styles from "./tailwind.css";
+import { rootAuthLoader } from '@clerk/remix/ssr.server'
+import { GeneralErrorBoundary } from '~/components/error-boundary'
+import styles from './tailwind.css'
 
-export const loader: LoaderFunction = (args) => rootAuthLoader(args);
-
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const loader: LoaderFunction = args => rootAuthLoader(args)
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
 function Document({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body className="w-full h-full">
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<Meta />
+				<Links />
+			</head>
+			<body className="h-full w-full">
+				{children}
+				<ScrollRestoration />
+				<Scripts />
+				<LiveReload />
+			</body>
+		</html>
+	)
 }
 
 function App() {
-  return (
-    <Document>
-      <Outlet />
-    </Document>
-  );
+	return (
+		<Document>
+			<Outlet />
+		</Document>
+	)
 }
 
-export default ClerkApp(App);
-export const ErrorBoundary = ClerkErrorBoundary();
+export default ClerkApp(App)
+export const ErrorBoundary = ClerkErrorBoundary(GeneralErrorBoundary)
