@@ -2,12 +2,12 @@ import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 
 import { createClerkClient } from '@clerk/remix/api.server'
 import { getAuth } from '@clerk/remix/ssr.server'
-import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import Footer from '~/components/footer'
 import NavBar from '~/components/navbar'
 import Products from '~/components/products'
 import { prisma } from '~/utils/db.server'
+import { doesAStoreExistsForThisUser } from '~/utils/shop.server'
 
 export const meta: MetaFunction = () => {
 	return [
@@ -33,25 +33,30 @@ export const loader: LoaderFunction = async args => {
 		// Create a new user in the database to link to Clerk user
 		const newDbUser = await prisma.userAccount.create({
 			data: {
-				userId: userId,
+				userId,
 				firstName: user.firstName || '',
 				lastName: user.lastName || '',
 				email: user.emailAddresses[0].emailAddress || '',
 			},
 		})
-
-		return json({ user: newDbUser })
+		return {
+			user: newDbUser,
+			redirectURL: await doesAStoreExistsForThisUser(userId),
+		}
 	}
 
-	return json({ user: dbUser })
+	return {
+		user: dbUser,
+		redirectURL: await doesAStoreExistsForThisUser(userId),
+	}
 }
 
 export default function Index() {
-	const { user } = useLoaderData<typeof loader>()
+	const { redirectURL } = useLoaderData<typeof loader>()
 
 	return (
 		<>
-			<NavBar />
+			<NavBar redirectURL={redirectURL} />
 			<main>
 				<Products />
 			</main>

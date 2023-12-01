@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut, UserButton } from '@clerk/remix'
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
 import {
+	BanknotesIcon,
 	Bars3Icon,
 	BuildingStorefrontIcon,
 	MagnifyingGlassIcon,
@@ -13,7 +14,7 @@ import { NavLink } from '@remix-run/react'
 import { classNames } from '~/utils/misc'
 import { navigation } from '~/utils/navbar-links'
 
-export default function NavBar() {
+export default function NavBar({ redirectURL }: { redirectURL: string }) {
 	const [open, setOpen] = useState(false)
 
 	return (
@@ -37,11 +38,11 @@ export default function NavBar() {
 						<Transition.Child
 							as={Fragment}
 							enter="transition ease-in-out duration-300 transform"
-							enterFrom="-translate-x-full"
-							enterTo="translate-x-0"
+							enterFrom="-trancyan-x-full"
+							enterTo="trancyan-x-0"
 							leave="transition ease-in-out duration-300 transform"
-							leaveFrom="translate-x-0"
-							leaveTo="-translate-x-full"
+							leaveFrom="trancyan-x-0"
+							leaveTo="-trancyan-x-full"
 						>
 							<Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl">
 								<div className="flex px-4 pb-2 pt-5">
@@ -58,7 +59,7 @@ export default function NavBar() {
 
 								{/* Links */}
 								<Tab.Group as="div" className="mt-2">
-									<div className="border-b border-slate-200">
+									<div className="border-b border-cyan-200">
 										<Tab.List className="-mb-px flex space-x-8 px-4">
 											{navigation.categories.map(category => (
 												<Tab
@@ -66,7 +67,7 @@ export default function NavBar() {
 													className={({ selected }) =>
 														classNames(
 															selected
-																? 'border-yellow-600 text-yellow-600'
+																? 'border-cyan-600 text-slate-600'
 																: 'border-transparent text-slate-900',
 															'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium',
 														)
@@ -89,7 +90,7 @@ export default function NavBar() {
 															key={item.name}
 															className="group relative text-sm"
 														>
-															<div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-slate-100 group-hover:opacity-75">
+															<div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-cyan-100 group-hover:opacity-75">
 																<img
 																	src={item.imageSrc}
 																	alt={item.imageAlt}
@@ -142,7 +143,7 @@ export default function NavBar() {
 									</Tab.Panels>
 								</Tab.Group>
 
-								<div className="space-y-6 border-t border-slate-200 px-4 py-6">
+								<div className="space-y-6 border-t border-cyan-200 px-4 py-6">
 									{navigation.pages.map(page => (
 										<div key={page.name} className="flow-root">
 											<a
@@ -155,7 +156,7 @@ export default function NavBar() {
 									))}
 								</div>
 
-								<div className="space-y-6 border-t border-slate-200 px-4 py-6">
+								<div className="space-y-6 border-t border-cyan-200 px-4 py-6">
 									<div className="flow-root">
 										<NavLink
 											to="/sign-in"
@@ -176,7 +177,7 @@ export default function NavBar() {
 									</div>
 								</div>
 
-								<div className="border-t border-slate-200 px-4 py-6">
+								<div className="border-t border-cyan-200 px-4 py-6">
 									<a href="#" className="-m-2 flex items-center p-2">
 										<img
 											src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/800px-Flag_of_the_United_States.svg.png?20150326181342"
@@ -196,7 +197,7 @@ export default function NavBar() {
 			</Transition.Root>
 
 			<header className="relative bg-white">
-				<p className="flex h-10 items-center justify-center bg-yellow-500 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+				<p className="flex h-10 items-center justify-center bg-cyan-500 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
 					Get free delivery on orders over $100
 				</p>
 
@@ -204,7 +205,7 @@ export default function NavBar() {
 					aria-label="Top"
 					className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
 				>
-					<div className="border-b border-slate-200">
+					<div className="border-b border-cyan-200">
 						<div className="flex h-16 items-center">
 							<button
 								type="button"
@@ -218,8 +219,7 @@ export default function NavBar() {
 
 							{/* Logo */}
 							<div className="ml-4 flex lg:ml-0">
-								<NavLink to="/">
-									<span className="sr-only">Umulash</span>
+								<NavLink className="flex items-center justify-center" to="/">
 									<img
 										className="h-16 w-auto"
 										src="/umulash_logo_2.svg"
@@ -239,7 +239,7 @@ export default function NavBar() {
 														<Popover.Button
 															className={classNames(
 																open
-																	? 'border-yellow-600 text-yellow-600'
+																	? 'border-cyan-600 text-slate-600'
 																	: 'border-transparent text-slate-700 hover:text-slate-800',
 																'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out',
 															)}
@@ -273,7 +273,7 @@ export default function NavBar() {
 																					key={item.name}
 																					className="group relative text-base sm:text-sm"
 																				>
-																					<div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-slate-100 group-hover:opacity-75">
+																					<div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-cyan-100 group-hover:opacity-75">
 																						<img
 																							src={item.imageSrc}
 																							alt={item.imageAlt}
@@ -356,13 +356,17 @@ export default function NavBar() {
 									<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
 										<UserButton afterSignOutUrl="/" />
 										<NavLink
-											to="/seller_dashboard"
+											to={redirectURL}
 											className="p-2 text-slate-400 hover:text-slate-500"
 										>
-											<BuildingStorefrontIcon
-												className="h-6 w-6"
-												aria-hidden="true"
-											/>
+											{redirectURL?.includes('seller-dashboard') ? (
+												<BuildingStorefrontIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+												/>
+											) : (
+												<BanknotesIcon className="h-6 w-6" aria-hidden="true" />
+											)}
 										</NavLink>
 									</div>
 								</SignedIn>
@@ -374,10 +378,7 @@ export default function NavBar() {
 										>
 											Sign in
 										</NavLink>
-										<span
-											className="h-6 w-px bg-slate-200"
-											aria-hidden="true"
-										/>
+										<span className="h-6 w-px bg-cyan-200" aria-hidden="true" />
 										<NavLink
 											to="/sign-up"
 											className="text-sm font-medium text-slate-700 hover:text-slate-800"
