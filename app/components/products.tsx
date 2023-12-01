@@ -48,7 +48,7 @@ const filters = [
 			{ value: 'white', label: 'White' },
 			{ value: 'black', label: 'Black' },
 			{ value: 'grey', label: 'Grey' },
-			{ value: 'yellow', label: 'yellow' },
+			{ value: 'cyan', label: 'cyan' },
 			{ value: 'olive', label: 'Olive' },
 			{ value: 'tan', label: 'Tan' },
 		],
@@ -93,11 +93,11 @@ const products1 = [
 		name: 'Focus Carry Pouch',
 		href: '#',
 		price: '$32',
-		description: 'Heather slate',
+		description: 'Heather cyan',
 		imageSrc:
 			'https://tailwindui.com/img/ecommerce-images/category-page-01-image-card-03.jpg',
 		imageAlt:
-			'Textured slate felt pouch for paper cards with snap button flap and elastic pen holder loop.',
+			'Textured cyan felt pouch for paper cards with snap button flap and elastic pen holder loop.',
 	},
 ]
 const products2 = [
@@ -140,7 +140,7 @@ export default function Products() {
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
 	return (
-		<div className="bg-slate-50">
+		<div className="bg-cyan-50">
 			<div>
 				{/* Mobile filter dialog */}
 				<Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -165,20 +165,20 @@ export default function Products() {
 							<Transition.Child
 								as={Fragment}
 								enter="transition ease-in-out duration-300 transform"
-								enterFrom="translate-x-full"
-								enterTo="translate-x-0"
+								enterFrom="trancyan-x-full"
+								enterTo="trancyan-x-0"
 								leave="transition ease-in-out duration-300 transform"
-								leaveFrom="translate-x-0"
-								leaveTo="translate-x-full"
+								leaveFrom="trancyan-x-0"
+								leaveTo="trancyan-x-full"
 							>
 								<Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl">
 									<div className="flex items-center justify-between px-4">
-										<h2 className="text-lg font-medium text-slate-900">
+										<h2 className="text-lg font-medium text-cyan-900">
 											Filters
 										</h2>
 										<button
 											type="button"
-											className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+											className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-cyan-400 hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-500"
 											onClick={() => setMobileFiltersOpen(false)}
 										>
 											<span className="sr-only">Close menu</span>
@@ -192,13 +192,13 @@ export default function Products() {
 											<Disclosure
 												as="div"
 												key={section.name}
-												className="border-t border-slate-200 px-4 py-6"
+												className="border-t border-cyan-200 px-4 py-6"
 											>
 												{({ open }) => (
 													<>
 														<h3 className="-mx-2 -my-3 flow-root">
-															<Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-slate-400">
-																<span className="font-medium text-slate-900">
+															<Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-cyan-400">
+																<span className="font-medium text-cyan-900">
 																	{section.name}
 																</span>
 																<span className="ml-6 flex items-center">
@@ -225,11 +225,11 @@ export default function Products() {
 																			defaultValue={option.value}
 																			type="checkbox"
 																			// defaultChecked={option?.checked}
-																			className="h-4 w-4 rounded border-slate-300 text-yellow-600 focus:ring-yellow-500"
+																			className="h-4 w-4 rounded border-cyan-300 text-cyan-600 focus:ring-cyan-500"
 																		/>
 																		<label
 																			htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-																			className="ml-3 text-sm text-slate-500"
+																			className="ml-3 text-sm text-cyan-500"
 																		>
 																			{option.label}
 																		</label>
@@ -251,10 +251,10 @@ export default function Products() {
 				<main>
 					<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 						<div className="py-24 text-center">
-							<h1 className="text-4xl font-bold tracking-tight text-slate-900">
+							<h1 className="text-4xl font-bold tracking-tight text-cyan-900">
 								New Arrivals
 							</h1>
-							<p className="mx-auto mt-4 max-w-3xl text-base text-slate-500">
+							<p className="mx-auto mt-4 max-w-3xl text-base text-cyan-500">
 								Thoughtfully designed objects for the workspace, home, and
 								travel.
 							</p>
@@ -263,7 +263,7 @@ export default function Products() {
 						{/* Filters */}
 						<section
 							aria-labelledby="filter-heading"
-							className="border-t border-slate-200 pt-6"
+							className="border-t border-cyan-200 pt-6"
 						>
 							<h2 id="filter-heading" className="sr-only">
 								Product filters
@@ -272,10 +272,10 @@ export default function Products() {
 							<div className="flex items-center justify-between">
 								<Menu as="div" className="relative inline-block text-left">
 									<div>
-										<Menu.Button className="group inline-flex justify-center text-sm font-medium text-slate-700 hover:text-slate-900">
+										<Menu.Button className="group inline-flex justify-center text-sm font-medium text-cyan-700 hover:text-cyan-900">
 											Sort
 											<ChevronDownIcon
-												className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-slate-400 group-hover:text-slate-500"
+												className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-cyan-400 group-hover:text-cyan-500"
 												aria-hidden="true"
 											/>
 										</Menu.Button>
@@ -298,8 +298,8 @@ export default function Products() {
 															<a
 																href={option.href}
 																className={classNames(
-																	active ? 'bg-slate-100' : '',
-																	'block px-4 py-2 text-sm font-medium text-slate-900',
+																	active ? 'bg-cyan-100' : '',
+																	'block px-4 py-2 text-sm font-medium text-cyan-900',
 																)}
 															>
 																{option.name}
@@ -314,7 +314,7 @@ export default function Products() {
 
 								<button
 									type="button"
-									className="inline-block text-sm font-medium text-slate-700 hover:text-slate-900 sm:hidden"
+									className="inline-block text-sm font-medium text-cyan-700 hover:text-cyan-900 sm:hidden"
 									onClick={() => setMobileFiltersOpen(true)}
 								>
 									Filters
@@ -329,15 +329,15 @@ export default function Products() {
 											className="relative inline-block text-left"
 										>
 											<div>
-												<Popover.Button className="group inline-flex items-center justify-center text-sm font-medium text-slate-700 hover:text-slate-900">
+												<Popover.Button className="group inline-flex items-center justify-center text-sm font-medium text-cyan-700 hover:text-cyan-900">
 													<span>{section.name}</span>
 													{sectionIdx === 0 ? (
-														<span className="ml-1.5 rounded bg-slate-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-slate-700">
+														<span className="ml-1.5 rounded bg-cyan-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-cyan-700">
 															1
 														</span>
 													) : null}
 													<ChevronDownIcon
-														className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-slate-400 group-hover:text-slate-500"
+														className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-cyan-400 group-hover:text-cyan-500"
 														aria-hidden="true"
 													/>
 												</Popover.Button>
@@ -365,11 +365,11 @@ export default function Products() {
 																	defaultValue={option.value}
 																	// defaultChecked={option?.checked}
 																	type="checkbox"
-																	className="h-4 w-4 rounded border-slate-300 text-yellow-600 focus:ring-yellow-500"
+																	className="h-4 w-4 rounded border-cyan-300 text-cyan-600 focus:ring-cyan-500"
 																/>
 																<label
 																	htmlFor={`filter-${section.id}-${optionIdx}`}
-																	className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-slate-900"
+																	className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-cyan-900"
 																>
 																	{option.label}
 																</label>
@@ -400,11 +400,11 @@ export default function Products() {
 												className="h-full w-full object-cover object-center group-hover:opacity-75"
 											/>
 										</div>
-										<div className="mt-4 flex items-center justify-between text-base font-medium text-slate-900">
+										<div className="mt-4 flex items-center justify-between text-base font-medium text-cyan-900">
 											<h3>{product.name}</h3>
 											<p>{product.price}</p>
 										</div>
-										<p className="mt-1 text-sm italic text-slate-500">
+										<p className="mt-1 text-sm italic text-cyan-500">
 											{product.description}
 										</p>
 									</a>
@@ -439,7 +439,7 @@ export default function Products() {
 									>
 										Workspace Collection
 									</h2>
-									<p className="mt-1 text-sm text-slate-300">
+									<p className="mt-1 text-sm text-cyan-300">
 										Upgrade your desk with objects that keep you organized and
 										clear-minded.
 									</p>
@@ -471,11 +471,11 @@ export default function Products() {
 												className="h-full w-full object-cover object-center group-hover:opacity-75"
 											/>
 										</div>
-										<div className="mt-4 flex items-center justify-between text-base font-medium text-slate-900">
+										<div className="mt-4 flex items-center justify-between text-base font-medium text-cyan-900">
 											<h3>{product.name}</h3>
 											<p>{product.price}</p>
 										</div>
-										<p className="mt-1 text-sm italic text-slate-500">
+										<p className="mt-1 text-sm italic text-cyan-500">
 											{product.description}
 										</p>
 									</a>

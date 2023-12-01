@@ -1,4 +1,3 @@
-import { Dialog, Transition } from '@headlessui/react'
 import {
 	Bars3Icon,
 	BellIcon,
@@ -11,14 +10,12 @@ import {
 	UsersIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
-import { UserButton } from '@clerk/remix'
-import { getAuth } from '@clerk/remix/ssr.server'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import type { LoaderFunction } from '@remix-run/node'
-import { redirect } from '@remix-run/node'
 import { NavLink } from '@remix-run/react'
+import { UserButton } from '@clerk/remix'
 import { classNames } from '~/utils/misc'
 
 const navigation = [
@@ -34,14 +31,6 @@ const teams = [
 	{ id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
 	{ id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
 ]
-
-export const loader: LoaderFunction = async args => {
-	const { userId } = await getAuth(args)
-	if (!userId) {
-		return redirect('/')
-	}
-	return {}
-}
 
 export default function SellerDashboard() {
 	const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -64,18 +53,18 @@ export default function SellerDashboard() {
 							leaveFrom="opacity-100"
 							leaveTo="opacity-0"
 						>
-							<div className="fixed inset-0 bg-slate-900/80" />
+							<div className="fixed inset-0 bg-cyan-900/80" />
 						</Transition.Child>
 
 						<div className="fixed inset-0 flex">
 							<Transition.Child
 								as={Fragment}
 								enter="transition ease-in-out duration-300 transform"
-								enterFrom="-translate-x-full"
-								enterTo="translate-x-0"
+								enterFrom="-trancyan-x-full"
+								enterTo="trancyan-x-0"
 								leave="transition ease-in-out duration-300 transform"
-								leaveFrom="translate-x-0"
-								leaveTo="-translate-x-full"
+								leaveFrom="trancyan-x-0"
+								leaveTo="-trancyan-x-full"
 							>
 								<Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
 									<Transition.Child
@@ -120,16 +109,16 @@ export default function SellerDashboard() {
 																	href={item.href}
 																	className={classNames(
 																		item.current
-																			? 'bg-slate-50 text-yellow-600'
-																			: 'text-slate-700 hover:bg-slate-50 hover:text-yellow-600',
+																			? 'bg-cyan-50 text-cyan-600'
+																			: 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600',
 																		'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
 																	)}
 																>
 																	<item.icon
 																		className={classNames(
 																			item.current
-																				? 'text-yellow-600'
-																				: 'text-slate-400 group-hover:text-yellow-600',
+																				? 'text-cyan-600'
+																				: 'text-cyan-400 group-hover:text-cyan-600',
 																			'h-6 w-6 shrink-0',
 																		)}
 																		aria-hidden="true"
@@ -141,7 +130,7 @@ export default function SellerDashboard() {
 													</ul>
 												</li>
 												<li>
-													<div className="text-xs font-semibold leading-6 text-slate-400">
+													<div className="text-xs font-semibold leading-6 text-cyan-400">
 														Your teams
 													</div>
 													<ul className="-mx-2 mt-2 space-y-1">
@@ -151,16 +140,16 @@ export default function SellerDashboard() {
 																	href={team.href}
 																	className={classNames(
 																		team.current
-																			? 'bg-slate-50 text-yellow-600'
-																			: 'text-slate-700 hover:bg-slate-50 hover:text-yellow-600',
+																			? 'bg-cyan-50 text-cyan-600'
+																			: 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600',
 																		'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
 																	)}
 																>
 																	<span
 																		className={classNames(
 																			team.current
-																				? 'border-yellow-600 text-yellow-600'
-																				: 'border-slate-200 text-slate-400 group-hover:border-yellow-600 group-hover:text-yellow-600',
+																				? 'border-cyan-600 text-cyan-600'
+																				: 'border-cyan-200 text-cyan-400 group-hover:border-cyan-600 group-hover:text-cyan-600',
 																			'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
 																		)}
 																	>
@@ -175,10 +164,10 @@ export default function SellerDashboard() {
 												<li className="mt-auto">
 													<a
 														href="#"
-														className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-700 hover:bg-slate-50 hover:text-yellow-600"
+														className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600"
 													>
 														<Cog6ToothIcon
-															className="h-6 w-6 shrink-0 text-slate-400 group-hover:text-yellow-600"
+															className="h-6 w-6 shrink-0 text-cyan-400 group-hover:text-cyan-600"
 															aria-hidden="true"
 														/>
 														Settings
@@ -196,7 +185,7 @@ export default function SellerDashboard() {
 				{/* Static sidebar for desktop */}
 				<div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
 					{/* Sidebar component, swap this element with another sidebar if you like */}
-					<div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-slate-200 bg-white px-6 pb-4">
+					<div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-cyan-200 bg-white px-6 pb-4">
 						<NavLink to="/" className="flex h-16 shrink-0 items-center">
 							<img
 								className="h-20 w-auto"
@@ -214,16 +203,16 @@ export default function SellerDashboard() {
 													href={item.href}
 													className={classNames(
 														item.current
-															? 'bg-slate-50 text-yellow-600'
-															: 'text-slate-700 hover:bg-slate-50 hover:text-yellow-600',
+															? 'bg-cyan-50 text-cyan-600'
+															: 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600',
 														'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
 													)}
 												>
 													<item.icon
 														className={classNames(
 															item.current
-																? 'text-yellow-600'
-																: 'text-slate-400 group-hover:text-yellow-600',
+																? 'text-cyan-600'
+																: 'text-cyan-400 group-hover:text-cyan-600',
 															'h-6 w-6 shrink-0',
 														)}
 														aria-hidden="true"
@@ -235,7 +224,7 @@ export default function SellerDashboard() {
 									</ul>
 								</li>
 								<li>
-									<div className="text-xs font-semibold leading-6 text-slate-400">
+									<div className="text-xs font-semibold leading-6 text-cyan-400">
 										Your teams
 									</div>
 									<ul className="-mx-2 mt-2 space-y-1">
@@ -245,16 +234,16 @@ export default function SellerDashboard() {
 													href={team.href}
 													className={classNames(
 														team.current
-															? 'bg-slate-50 text-yellow-600'
-															: 'text-slate-700 hover:bg-slate-50 hover:text-yellow-600',
+															? 'bg-cyan-50 text-cyan-600'
+															: 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600',
 														'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
 													)}
 												>
 													<span
 														className={classNames(
 															team.current
-																? 'border-yellow-600 text-yellow-600'
-																: 'border-slate-200 text-slate-400 group-hover:border-yellow-600 group-hover:text-yellow-600',
+																? 'border-cyan-600 text-cyan-600'
+																: 'border-cyan-200 text-cyan-400 group-hover:border-cyan-600 group-hover:text-cyan-600',
 															'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
 														)}
 													>
@@ -269,10 +258,10 @@ export default function SellerDashboard() {
 								<li className="mt-auto">
 									<a
 										href="#"
-										className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-700 hover:bg-slate-50 hover:text-yellow-600"
+										className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-600"
 									>
 										<Cog6ToothIcon
-											className="h-6 w-6 shrink-0 text-slate-400 group-hover:text-yellow-600"
+											className="h-6 w-6 shrink-0 text-cyan-400 group-hover:text-cyan-600"
 											aria-hidden="true"
 										/>
 										Settings
@@ -285,10 +274,10 @@ export default function SellerDashboard() {
 
 				<div className="lg:pl-72">
 					<div className="sticky top-0 z-40 w-full lg:px-8">
-						<div className="flex h-16 items-center gap-x-4 border-b border-slate-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
+						<div className="flex h-16 items-center gap-x-4 border-b border-cyan-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
 							<button
 								type="button"
-								className="-m-2.5 p-2.5 text-slate-700 lg:hidden"
+								className="-m-2.5 p-2.5 text-cyan-700 lg:hidden"
 								onClick={() => setSidebarOpen(true)}
 							>
 								<span className="sr-only">Open sidebar</span>
@@ -297,7 +286,7 @@ export default function SellerDashboard() {
 
 							{/* Separator */}
 							<div
-								className="h-6 w-px bg-slate-200 lg:hidden"
+								className="h-6 w-px bg-cyan-200 lg:hidden"
 								aria-hidden="true"
 							/>
 
@@ -307,12 +296,12 @@ export default function SellerDashboard() {
 										Search
 									</label>
 									<MagnifyingGlassIcon
-										className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-slate-400"
+										className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-cyan-400"
 										aria-hidden="true"
 									/>
 									<input
 										id="search-field"
-										className="block h-full w-full border-0 py-0 pl-8 pr-0 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm"
+										className="block h-full w-full border-0 py-0 pl-8 pr-0 text-cyan-900 placeholder:text-cyan-400 focus:ring-0 sm:text-sm"
 										placeholder="Search..."
 										type="search"
 										name="search"
@@ -321,7 +310,7 @@ export default function SellerDashboard() {
 								<div className="flex items-center gap-x-4 lg:gap-x-6">
 									<button
 										type="button"
-										className="-m-2.5 p-2.5 text-slate-400 hover:text-slate-500"
+										className="-m-2.5 p-2.5 text-cyan-400 hover:text-cyan-500"
 									>
 										<span className="sr-only">View notifications</span>
 										<BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -329,7 +318,7 @@ export default function SellerDashboard() {
 
 									{/* Separator */}
 									<div
-										className="hidden lg:block lg:h-6 lg:w-px lg:bg-slate-200"
+										className="hidden lg:block lg:h-6 lg:w-px lg:bg-cyan-200"
 										aria-hidden="true"
 									/>
 

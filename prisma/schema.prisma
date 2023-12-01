@@ -8,72 +8,47 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Service {
-  id                         String            @id @default(uuid())
-  eventPlannerId             String            @unique
-  title                      String            @db.VarChar(255)
-  description                String            @db.LongText
-  price                      Float
-  createdAt                  DateTime          @default(now())
-  updatedAt                  DateTime          @updatedAt
-  EventPlannerShop           EventPlannerShop? @relation(fields: [eventPlannerEventPlannerId], references: [eventPlannerId])
-  eventPlannerEventPlannerId String?
-
-  @@index([eventPlannerEventPlannerId])
-}
-
 model UserAccount {
-  id         String   @id @default(uuid())
-  userId     String   @unique
-  email      String?  @unique
-  firstName  String
-  middleName String?
-  lastName   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  email            String?           @unique
+  firstName        String
+  middleName       String?
+  lastName         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  eventPlannerShop EventPlannerShop?
+  shopOnboarding   ShopOnboarding?
 }
 
-// A user can have one Event Planner profile, and each Event Planner profile can have multiple Services (Service table). - One to Many relationship
-
-// Each Event Planner profile can have multiple Pricing Packages (PricingPackage table), also multiple Availability entries (Availability table) and multiple Services Offered (Service table) - One to Many relationship 
 model EventPlannerShop {
-  eventPlannerId  String           @id @default(uuid())
-  userId          String           @unique
-  businessName    String
-  profilePicture  String
-  bio             String           @db.LongText
-  servicesOffered Service[]
-  pricing         PricingPackage[]
-  averageRating   Float
-  availability    Availability[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                 String      @id @default(uuid())
+  owner              UserAccount @relation(fields: [ownerId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  ownerId            String      @unique
+  businessName       String      @unique
+  onboardingComplete Boolean     @default(false)
+  onboardingSteps    Json
+  profilePicture     String?
+  bio                String?     @db.LongText
+  averageRating      Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model PricingPackage {
-  id                         String            @id @default(uuid())
-  eventPlannerId             String            @unique
-  packageName                String            @db.VarChar(255)
-  packageDescription         String            @db.LongText
-  price                      Float
-  createdAt                  DateTime          @default(now())
-  updatedAt                  DateTime          @updatedAt
-  EventPlannerShop           EventPlannerShop? @relation(fields: [eventPlannerEventPlannerId], references: [eventPlannerId])
-  eventPlannerEventPlannerId String?
-
-  @@index([eventPlannerEventPlannerId])
+model ShopOnboarding {
+  id                 String      @id @default(uuid())
+  owner              UserAccount @relation(fields: [ownerId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  ownerId            String      @unique
+  onboardingComplete Boolean     @default(false)
+  onboardingSteps    Json
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
 
-model Availability {
-  id                         String            @id @default(uuid())
-  eventPlannerId             String            @unique
-  dayOfWeek                  String            @db.VarChar(255)
-  startTime                  DateTime
-  endTime                    DateTime
-  createdAt                  DateTime          @default(now())
-  updatedAt                  DateTime          @updatedAt
-  EventPlannerShop           EventPlannerShop? @relation(fields: [eventPlannerEventPlannerId], references: [eventPlannerId])
-  eventPlannerEventPlannerId String?
-
-  @@index([eventPlannerEventPlannerId])
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

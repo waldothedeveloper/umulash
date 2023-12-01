@@ -1,12 +1,10 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss'
 
 export default {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [
-    require("@tailwindcss/aspect-ratio"),
-    require("@tailwindcss/forms"),
-  ],
-} satisfies Config;
+	content: ['./app/**/*.{js,jsx,ts,tsx}'],
+	plugins: [
+		require('@tailwindcss/typography'),
+		require('@tailwindcss/aspect-ratio'),
+		require('@tailwindcss/forms'),
+	],
+} satisfies Config
