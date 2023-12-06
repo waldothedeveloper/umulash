@@ -4,7 +4,6 @@ import { Fragment, useRef, useState } from 'react'
 
 import type { FieldConfig } from '@conform-to/react'
 import { useInputEvent } from '@conform-to/react'
-import type { Categories } from '~/types/index'
 import { classNames } from '~/utils/misc'
 
 export default function SelectCategory({
@@ -12,7 +11,7 @@ export default function SelectCategory({
 	config,
 	conform,
 }: {
-	categories: Categories
+	categories: any
 	config: FieldConfig<string>
 	conform: any
 }) {
