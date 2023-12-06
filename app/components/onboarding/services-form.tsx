@@ -1,6 +1,6 @@
-import type { Fieldset } from '@conform-to/react'
-import type { JsonifyObject, ServiceDetails } from '~/types/index'
+import type { ServiceDetails } from '~/types/index'
 
+import type { Fieldset } from '@conform-to/react'
 import { ServicesPhotoDetails } from '~/components/onboarding/step-2-services/photo-details'
 import { ServicesDetails } from '~/components/onboarding/step-2-services/service-details'
 import { ServicesPhotos } from '~/components/onboarding/step-2-services/service-photos'
@@ -12,7 +12,7 @@ export default function ServicesForm({
 }: {
 	conform: any
 	fields: Fieldset<ServiceDetails>
-	categories: JsonifyObject
+	categories: any
 }) {
 	return (
 		<div className="space-y-10">

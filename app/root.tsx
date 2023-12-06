@@ -27,7 +27,7 @@ export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
 function Document({ children }: { children: React.ReactNode }) {
 	const data = useLoaderData<typeof loader>()
-	console.log('data: ', data)
+
 	return (
 		<html lang="en">
 			<head>
@@ -44,7 +44,7 @@ function Document({ children }: { children: React.ReactNode }) {
 				/>
 				<script
 					async
-					src={`https://maps.googleapis.com/maps/api/js?key=${data.ENV.GOOGLE_MAPS_API_KEY}&libraries=places`}
+					src={`https://maps.googleapis.com/maps/api/js?key=${data.ENV.GOOGLE_MAPS_API_KEY}&callback=Function.prototype&libraries=places`}
 				></script>
 				{children}
 				<ScrollRestoration />

@@ -2,7 +2,7 @@ import { type Fieldset } from '@conform-to/react'
 
 import AddOns from '~/components/onboarding/step-2-services/add-ons'
 import SelectCategory from '~/components/onboarding/step-2-services/categories'
-import { Location } from '~/components/onboarding/step-2-services/location'
+import { LocationSearch } from '~/components/onboarding/step-2-services/location-search'
 import { CustomCategoryInput } from '~/components/ui/customCategoryTextField'
 import { DescriptionTextAreaField } from '~/components/ui/descriptionTextAreaField'
 import { TitleTextField } from '~/components/ui/titleTextField'
@@ -192,7 +192,7 @@ export const ServicesDetails = ({
 				</div>
 
 				<div className="col-span-full">
-					<Location conform={conform} fields={fields} />
+					<LocationSearch conform={conform} fields={fields} />
 				</div>
 				<div className="col-span-full">
 					<AddOns conform={conform} fields={fields} />

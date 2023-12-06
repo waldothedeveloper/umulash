@@ -49,7 +49,14 @@ const ServicesSchema = z
 			.refine(x => x * 100 - Math.trunc(x * 100) < Number.EPSILON),
 		category: z.string().optional(),
 		custom_category: z.string().optional(),
-		location: z.array(z.string()).nonempty(),
+		location: z
+			.array(
+				z.string({
+					required_error: 'A service location is required',
+					invalid_type_error: 'The service location must be a string',
+				}),
+			)
+			.nonempty(),
 		addOn: z.string().optional(),
 	})
 	.transform((data, ctx) => {
@@ -130,7 +137,7 @@ export async function action(args: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ServicesSchema,
 	})
-	console.log('submission WFT WFT WTF WTF : ', submission.payload)
+	// console.log('submission WFT WFT WTF WTF : ', submission.payload)
 
 	if (!submission.value || submission.intent !== 'submit') {
 		return json({ submission } as const)
@@ -145,8 +152,8 @@ export async function action(args: DataFunctionArgs) {
 				Philip Whitehouse
  				Mar 4, 2012 at 13:35
 	*/
-	// return json(submission)
-	return redirect('/onboarding/get-paid')
+	return json({ submission } as const)
+	// return redirect('/onboarding/get-paid')
 }
 
 export default function CreateServices() {
