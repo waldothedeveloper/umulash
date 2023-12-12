@@ -19,6 +19,7 @@ export const loader: LoaderFunction = args => {
 		return {
 			ENV: {
 				GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+				CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
 			},
 		}
 	})
@@ -46,7 +47,9 @@ function Document({ children }: { children: React.ReactNode }) {
 					async
 					src={`https://maps.googleapis.com/maps/api/js?key=${data.ENV.GOOGLE_MAPS_API_KEY}&callback=Function.prototype&libraries=places`}
 				></script>
+
 				{children}
+
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />

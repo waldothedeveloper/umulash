@@ -1,10 +1,16 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
+	json,
+	unstable_parseMultipartFormData as parseMultipartFormData,
+	redirect,
+	type DataFunctionArgs,
+} from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useId } from 'react'
 import { z } from 'zod'
-import ServicesForm from '~/components/onboarding/services-form'
+import ServicesForm from '~/components/onboarding/step-2-services/services-form'
 import { checkUserID } from '~/utils/auth.server'
 import { prisma } from '~/utils/db.server'
 
@@ -58,6 +64,9 @@ const ServicesSchema = z
 			)
 			.nonempty(),
 		addOn: z.string().optional(),
+		file_upload: z
+			.array(z.instanceof(File, { message: 'A valid image is required' }))
+			.nonempty(),
 	})
 	.transform((data, ctx) => {
 		try {
@@ -97,6 +106,7 @@ const ServicesSchema = z
 				} else {
 					return data
 				}
+				// remember to add validation for the files upload array to make sure those pictures are not gigantic
 			} else {
 				return data
 			}
@@ -125,6 +135,8 @@ export async function loader(args: DataFunctionArgs) {
 	return json({ categories })
 }
 
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 12 // 30MB
+
 // submitting and validating the form
 export async function action(args: DataFunctionArgs) {
 	const userId = await checkUserID(args)
@@ -133,11 +145,16 @@ export async function action(args: DataFunctionArgs) {
 		return redirect('/')
 	}
 
-	const formData = await args.request.formData()
+	const formData = await parseMultipartFormData(
+		args.request,
+		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
+	)
+
+	//
 	const submission = parse(formData, {
 		schema: ServicesSchema,
 	})
-	// console.log('submission WFT WFT WTF WTF : ', submission.payload)
+	console.log('submitting form on the server!!! : ', submission.payload)
 
 	if (!submission.value || submission.intent !== 'submit') {
 		return json({ submission } as const)
@@ -162,13 +179,13 @@ export default function CreateServices() {
 	const actionData = useActionData<typeof action>()
 	const [form, fields] = useForm({
 		id,
-		shouldValidate: 'onBlur',
+		shouldValidate: 'onSubmit',
 		shouldRevalidate: 'onBlur',
 		constraint: getFieldsetConstraint(ServicesSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			const res = parse(formData, { schema: ServicesSchema })
-			console.log(`submission payload: `, res)
+			console.log(`validating form on client: `, res)
 			return res
 		},
 	})
@@ -191,8 +208,18 @@ export default function CreateServices() {
 			</div>
 			<div className="space-x-4">
 				<div>
-					<Form {...form.props} method="post">
-						<ServicesForm conform={conform} fields={fields} categories={data} />
+					<Form
+						{...form.props}
+						method="post"
+						encType="multipart/form-data"
+						id="my_form"
+					>
+						<ServicesForm
+							conform={conform}
+							fields={fields}
+							categories={data}
+							form={form}
+						/>
 						<div className="mt-6 flex items-center justify-end gap-x-6">
 							<button
 								type="button"
