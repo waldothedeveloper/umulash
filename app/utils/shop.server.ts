@@ -70,7 +70,6 @@ export const doesAStoreExistsForThisUser = async (userId: string | null) => {
 		},
 		where: { ownerId: userId },
 	})
-	console.log('isUserBeingOnboarded: ', isUserBeingOnboarded)
 
 	if (!isUserBeingOnboarded) {
 		// we can redirect to the onboarding process, yay!
