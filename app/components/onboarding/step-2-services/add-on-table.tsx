@@ -1,6 +1,5 @@
 import { currencyFormatter } from '~/utils/currencyFormatter'
 
-//
 export const AddOnTable = ({
 	addOns,
 	setAddedAddOns,

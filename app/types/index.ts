@@ -1,13 +1,26 @@
 export type OnboardingSteps = {
-	ownerId: string
+	ownerId?: string
 	onboardingSteps: {
 		steps: {
-			businessName: string
-			description: string
 			id: string
+			href: string
 			name: string
 			status: string
-			href: string
+			description: string
+			businessName: string
+			shop_services?: {
+				title?: string
+				description?: string
+				price?: number
+				location?: string[]
+				category?: string
+				custom_category?: string
+				add_On?: {
+					add_On: string
+					addOnPrice: string
+					id: string
+				}[]
+			}
 		}[]
 	}
 }
@@ -33,8 +46,11 @@ export type ServiceDetails = {
 }
 
 export type JsonifyObject = {
-	categories: { id: string; name: string; createdAt: Date; updatedAt: Date }[]
-}
+	id: string
+	name: string
+	createdAt: string
+	updatedAt: string
+}[]
 
 export type LoaderData = {
 	steps: {
@@ -108,4 +124,10 @@ declare global {
 			CLOUDINARY_CLOUD_NAME: string
 		}
 	}
+}
+
+export type addOnType = {
+	add_On: string
+	addOnPrice: string
+	id: string
 }

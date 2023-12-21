@@ -16,7 +16,7 @@ export const AddOnPriceInput = (props: any) => {
 	return (
 		<>
 			<label
-				className="block text-sm font-medium leading-6 text-slate-900"
+				className="mt-2 block text-sm font-medium leading-6 text-slate-900 md:mt-0"
 				{...labelProps}
 			>
 				{props.label}

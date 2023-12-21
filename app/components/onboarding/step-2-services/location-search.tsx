@@ -1,20 +1,20 @@
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Fragment, useEffect, useState } from 'react'
-import type { GooglePlaceDisplayData, ServiceDetails } from '~/types/index'
 
-import type { Fieldset } from '@conform-to/react'
+import { requestIntent } from '@conform-to/react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { useFetcher } from '@remix-run/react'
 import { HiddenLocationInputs } from '~/components/onboarding/step-2-services/hidden-location-inputs'
 import { LocationTable } from '~/components/onboarding/step-2-services/locations-table'
+import type { GooglePlaceDisplayData } from '~/types/index'
 
 export const LocationSearch = ({
-	conform,
-	fields,
+	form,
+	location,
 }: {
-	conform: any
-	fields: Fieldset<ServiceDetails>
+	form: any
+	location: any
 }) => {
 	const [locationsArray, setLocationsArray] = useState<
 		GooglePlaceDisplayData[]
@@ -26,7 +26,21 @@ export const LocationSearch = ({
 	const { data, state } = fetcher
 
 	useEffect(() => {
-		if (query.length > 1) {
+		if (location.defaultValue) {
+			const locationFromLoader = JSON.parse(location.defaultValue)
+			setLocationsArray(locationFromLoader)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	useEffect(() => {
+		requestIntent(form.ref.current, {
+			value: 'validate/location',
+		})
+	}, [locationsArray, form.ref])
+
+	useEffect(() => {
+		if (query.length > 0) {
 			fetcher.load(`/address_search/autocomplete?search=${query}`)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,16 +50,24 @@ export const LocationSearch = ({
 		<div>
 			<div className="block text-sm font-medium leading-6 text-slate-900">
 				Location
+				<span
+					className={location.error ? 'text-red-500' : 'text-slate-900'}
+					aria-hidden="true"
+				>
+					&nbsp;*
+				</span>
 			</div>
-			<HiddenLocationInputs
-				conform={conform}
-				fields={fields}
-				locationsArray={locationsArray}
-			/>
-			<div className="mt-2 flex justify-between">
+			<HiddenLocationInputs locationsArray={locationsArray} />
+			<div className="mt-2 flex flex-col justify-between md:flex-row">
 				<Combobox value={selected} onChange={setSelected}>
 					<div className="relative mt-1 w-full">
-						<div className="relative w-full cursor-default overflow-hidden rounded-md bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-cyan-300 sm:text-sm">
+						<div
+							className={
+								location.error
+									? 'focus-visible:ring-red/75 relative w-full cursor-default overflow-hidden rounded-md bg-white text-left shadow-md shadow-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-red-300 sm:text-sm'
+									: 'relative w-full cursor-default overflow-hidden rounded-md bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-cyan-300 sm:text-sm'
+							}
+						>
 							<Combobox.Input
 								placeholder="e.g. New York, Miami, Central Park, etc."
 								className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-slate-900 ring focus:ring-0"
@@ -150,37 +172,36 @@ export const LocationSearch = ({
 						</Transition>
 					</div>
 				</Combobox>
-				<button
-					disabled={state === 'loading'}
-					onClick={() => {
-						const exists = locationsArray.find(
-							location => location.id === selected?.id,
-						)
-						if (exists) {
-							return
-						}
+				<span className="flex-none md:inline-flex">
+					<button
+						disabled={state === 'loading'}
+						onClick={() => {
+							const exists = locationsArray.find(
+								location => location.id === selected?.id,
+							)
+							if (exists) {
+								return
+							}
 
-						if (selected) {
-							setLocationsArray(currLocations => [...currLocations, selected])
-							setSelected(null)
+							if (selected) {
+								setLocationsArray(currLocations => [...currLocations, selected])
+								setSelected(null)
+							}
+						}}
+						type="button"
+						className={
+							(!locationsArray.length && !selected) || (!selected && !query)
+								? 'mt-6 inline-flex flex-grow-0 items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-1.5 text-sm font-semibold text-white opacity-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 md:ml-6 md:mt-0'
+								: 'mt-3 inline-flex flex-grow-0  items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 md:ml-6 md:mt-0'
 						}
-					}}
-					type="button"
-					className={
-						(!locationsArray.length && !selected) || (!selected && !query)
-							? 'ml-6 inline-flex items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-1.5 text-sm font-semibold text-white opacity-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
-							: 'ml-6 inline-flex items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
-					}
-				>
-					Add
-					<PlusCircleIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
-				</button>
+					>
+						Add
+						<PlusCircleIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+					</button>
+				</span>
 			</div>
-			<p
-				className="mt-2 text-sm text-red-600"
-				id={`${fields.location.id}-error`}
-			>
-				{fields.location.error}
+			<p className="mt-2 text-sm text-red-600" id={location.errorId}>
+				{location.error}
 			</p>
 
 			<p className="mt-3 text-sm leading-6 text-slate-600">
