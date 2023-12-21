@@ -7,7 +7,8 @@ export const onboarding = (value: string) => {
 				id: 1,
 				status: 'complete',
 				name: 'Give your store a name',
-				description: 'Think of what makes you unique and distinctive.',
+				description:
+					'Setup your store name. Think of what makes you unique and distinctive.',
 				href: '/onboarding/store-name',
 				businessName: value,
 			},
@@ -16,28 +17,30 @@ export const onboarding = (value: string) => {
 				status: 'current',
 				name: 'Create your services',
 				description:
-					'Either one or multiple package services that could have different pricing tiers.',
+					'Setup your services and pricing. So you can run your business from day one.',
 				href: '/onboarding/create-services',
 			},
 			{
 				id: 3,
 				status: 'upcoming',
 				name: 'How will you get paid',
-				description: '',
+				description: 'Setup how to get paid. Who doesn&apos;t like that?',
 				href: '/onboarding/get-paid',
 			},
 			{
 				id: 4,
 				status: 'upcoming',
 				name: 'Set up billing',
-				description: '',
+				description:
+					'Set up your billing information. We do some nice shores for you but they come at a cost.',
 				href: '/onboarding/setup-billing',
 			},
 			{
 				id: 5,
 				status: 'upcoming',
 				name: 'Your store security',
-				description: '/onboarding/store-security',
+				description:
+					'Set up your store security. Don&pos;t let anyone mess with your hard work.',
 				href: '',
 			},
 		],
@@ -127,7 +130,8 @@ export const setupOnboarding = async (userId: string) => {
 						id: 1,
 						status: 'current',
 						name: 'Give your store a name',
-						description: 'Think of what makes you unique and distinctive.',
+						description:
+							'Setup your store name. Think of what makes you unique and distinctive.',
 						href: '/onboarding/store-name',
 						businessName: '',
 					},
@@ -136,29 +140,32 @@ export const setupOnboarding = async (userId: string) => {
 						status: 'upcoming',
 						name: 'Create your services',
 						description:
-							'Either one or multiple package services that could have different pricing tiers.',
+							'Setup your services and pricing. So you can run your business from day one.',
 						href: '/onboarding/create-services',
+						store_services: [],
 					},
 					{
 						id: 3,
 						status: 'upcoming',
 						name: 'How will you get paid',
-						description: '',
+						description: 'Setup how to get paid. Who doesn&apos;t like that?',
 						href: '/onboarding/get-paid',
 					},
 					{
 						id: 4,
 						status: 'upcoming',
 						name: 'Set up billing',
-						description: '',
+						description:
+							'Set up your billing information. We do some nice shores for you but they come at a cost.',
 						href: '/onboarding/setup-billing',
 					},
 					{
 						id: 5,
 						status: 'upcoming',
 						name: 'Your store security',
-						description: '/onboarding/store-security',
-						href: '/seller-dashboard',
+						description:
+							'Set up your store security. Don&pos;t let anyone mess with your hard work.',
+						href: '',
 					},
 				],
 			},

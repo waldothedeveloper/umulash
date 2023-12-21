@@ -1,18 +1,12 @@
-import { type Fieldset } from '@conform-to/react'
+import { useEffect, useState } from 'react'
+
+import { requestIntent } from '@conform-to/react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
 import { AddOnTable } from '~/components/onboarding/step-2-services/add-on-table'
 import { AddOnPriceInput } from '~/components/ui/addOnPriceTextField'
 import { AddOnInput } from '~/components/ui/addOnTextField'
-import type { ServiceDetails } from '~/types/index'
 
-export default function AddOns({
-	conform,
-	fields,
-}: {
-	conform: any
-	fields: Fieldset<ServiceDetails>
-}) {
+export default function AddOns({ add_On, form }: { add_On: any; form: any }) {
 	const [addOn, setAddOn] = useState('')
 	const [addOnPrice, setAddOnPrice] = useState('')
 	const [errorAddOn, setErrorAddOn] = useState('')
@@ -20,6 +14,20 @@ export default function AddOns({
 	const [addedAddOns, setAddedAddOns] = useState<
 		{ addOn: string; addOnPrice: string; id: string }[]
 	>([])
+
+	useEffect(() => {
+		if (add_On.defaultValue) {
+			const addOnsFromLoader = JSON.parse(add_On.defaultValue)
+			setAddedAddOns(addOnsFromLoader)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	useEffect(() => {
+		requestIntent(form.ref.current, {
+			value: 'validate/add_On',
+		})
+	}, [addedAddOns, form.ref])
 
 	const handleAddon = () => {
 		const alreadyExists = addedAddOns.some(
@@ -58,14 +66,17 @@ export default function AddOns({
 	return (
 		<div>
 			<input
-				id={fields.addOn.id}
+				hidden
+				readOnly
+				id={add_On.id}
 				value={JSON.stringify(addedAddOns)}
-				{...conform.input(fields.addOn, { hidden: true })}
-				onChange={() => void 0}
+				type="text"
+				name="add_On"
+				aria-hidden="true"
 			/>
 
-			<div className="grid grid-cols-6 grid-rows-2 items-center gap-x-4">
-				<div className="col-span-3">
+			<div className="grid grid-rows-2 items-center gap-x-4 md:grid-cols-6">
+				<div className="col-span-2 md:col-span-3">
 					<AddOnInput
 						label="Add-On"
 						placeholder="e.g. Musician, etc."
@@ -90,10 +101,11 @@ export default function AddOns({
 				</div>
 				<div className="self-end">
 					<button
+						disabled={!addedAddOns.length && !addOn && !addOnPrice}
 						onClick={handleAddon}
 						type="button"
 						className={
-							!addedAddOns.length
+							!addedAddOns.length && !addOn && !addOnPrice
 								? 'inline-flex items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-2 text-sm font-semibold text-white opacity-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
 								: 'inline-flex items-center gap-x-1.5 rounded-md bg-cyan-600 px-2.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600'
 						}
@@ -107,8 +119,8 @@ export default function AddOns({
 						{errorAddOn.length > 0 && errorAddOn}
 					</p>
 				</div>
-				<div className="col-span-2">
-					{fields.addOn.error || errorAddOnPrice.length > 0 ? null : (
+				<div className="col-span-2 mt-2 md:mt-0">
+					{add_On.error || errorAddOnPrice.length > 0 ? null : (
 						<p className="text-xs text-slate-400">
 							Add-On price cannot exceed $50,000 usd dollars.
 						</p>
@@ -119,9 +131,13 @@ export default function AddOns({
 				</div>
 			</div>
 
-			<AddOnTable addOns={addedAddOns} setAddedAddOns={setAddedAddOns} />
+			<div className="mt-6 md:mt-0">
+				<AddOnTable addOns={addedAddOns} setAddedAddOns={setAddedAddOns} />
+			</div>
 			<div className="mt-6">
-				<p className="text-sm text-red-600">{fields.addOn.error}</p>
+				<p id={add_On.errorId} className="text-sm text-red-600">
+					{add_On.error}
+				</p>
 			</div>
 		</div>
 	)

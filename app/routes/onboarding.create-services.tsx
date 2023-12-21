@@ -1,5 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { Prisma } from '@prisma/client'
 import {
 	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
 	json,
@@ -9,115 +10,26 @@ import {
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useId } from 'react'
-import { z } from 'zod'
-import ServicesForm from '~/components/onboarding/step-2-services/services-form'
+import AddOns from '~/components/onboarding/step-2-services/add-ons'
+import SelectCategory from '~/components/onboarding/step-2-services/categories'
+import { CustomCategoryInput } from '~/components/onboarding/step-2-services/custom-category-input'
+import { DescriptionInput } from '~/components/onboarding/step-2-services/description-input'
+import { LocationSearch } from '~/components/onboarding/step-2-services/location-search'
+import { ServicesPhotoDetails } from '~/components/onboarding/step-2-services/photo-details'
+import { PriceInput } from '~/components/onboarding/step-2-services/price-input'
+import { ServicesPhotos } from '~/components/onboarding/step-2-services/services-photos'
+import { TitleInput } from '~/components/onboarding/step-2-services/title-input'
+import { FormWrapper } from '~/components/ui/formWrapper'
+import type { OnboardingSteps } from '~/types/index'
 import { checkUserID } from '~/utils/auth.server'
+import { convertCentsToDollars } from '~/utils/convertCentsToDollars'
+import { convertDollarsToCents } from '~/utils/convertDollarsToCents'
 import { prisma } from '~/utils/db.server'
+import { ServicesSchema } from '~/utils/services-schema'
 
-type addOnType = {
-	addOn: string
-	addOnPrice: string
-	id: string
-}
-
-const ServicesSchema = z
-	.object({
-		title: z
-			.string({
-				required_error: 'A service title is required',
-				invalid_type_error: 'The service title must be a string',
-			})
-			.min(2, {
-				message:
-					'The service title must be at least 2 characters or a single word.',
-			})
-			.max(50, {
-				message: 'The service title cannot be more than 50 characters.',
-			})
-			.trim(),
-		description: z
-			.string({
-				required_error: 'A service description is required',
-				invalid_type_error: 'The service description must be a string',
-			})
-			.min(1, {
-				message: 'The service description must be at least 50 characters.',
-			})
-			.max(250, {
-				message: 'The service title cannot be more than 50 characters.',
-			})
-			.trim(),
-		price: z
-			.number({
-				required_error: 'A service price is required',
-				invalid_type_error: 'The service price must be a number',
-			})
-			.refine(x => x * 100 - Math.trunc(x * 100) < Number.EPSILON),
-		category: z.string().optional(),
-		custom_category: z.string().optional(),
-		location: z
-			.array(
-				z.string({
-					required_error: 'A service location is required',
-					invalid_type_error: 'The service location must be a string',
-				}),
-			)
-			.nonempty(),
-		addOn: z.string().optional(),
-		file_upload: z
-			.array(z.instanceof(File, { message: 'A valid image is required' }))
-			.nonempty(),
-	})
-	.transform((data, ctx) => {
-		try {
-			const { addOn, category, custom_category } = data
-
-			if (!category && !custom_category) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message:
-						'Please select a pre-defined category above or create a custom category on this field.',
-					path: ['custom_category'],
-				})
-				return null
-			} else if (typeof addOn === 'string' && addOn.length > 0) {
-				const addOns = JSON.parse(addOn) as addOnType[]
-				const totalAddOnPrice = addOns.reduce((acc, curr) => {
-					return acc + parseFloat(curr.addOnPrice)
-				}, 0)
-
-				// limit the total addOnPrice to 50,000
-				if (totalAddOnPrice > 50000) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message:
-							'Add-on prices cannot be more than $50,000 usd dollars. Please delete any add-ons that exceed this limit to continue.',
-						path: ['addOn'],
-					})
-					return null
-				} else if (totalAddOnPrice < 0) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message:
-							'The total add-on price must be at least $1 usd dollar. Please add an add-on to continue.',
-						path: ['addOn'],
-					})
-					return null
-				} else {
-					return data
-				}
-				// remember to add validation for the files upload array to make sure those pictures are not gigantic
-			} else {
-				return data
-			}
-		} catch (error) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: 'There was an error processing your request.',
-			})
-			return null
-		}
-	})
+const selectOnboardingSteps = Prisma.validator<Prisma.ShopOnboardingSelect>()({
+	onboardingSteps: true,
+})
 
 export async function loader(args: DataFunctionArgs) {
 	const userId = await checkUserID(args)
@@ -132,10 +44,22 @@ export async function loader(args: DataFunctionArgs) {
 		},
 	})
 
-	return json({ categories })
+	const onboardingSteps = (await prisma.shopOnboarding.findUnique({
+		select: selectOnboardingSteps,
+		where: {
+			ownerId: userId,
+		},
+	})) as OnboardingSteps | null
+
+	if (!onboardingSteps) {
+		throw new Error('No onboarding steps found')
+	}
+
+	const { steps } = onboardingSteps.onboardingSteps
+	return json({ categories, steps: steps })
 }
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 12 // 30MB
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 12
 
 // submitting and validating the form
 export async function action(args: DataFunctionArgs) {
@@ -154,39 +78,151 @@ export async function action(args: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ServicesSchema,
 	})
-	console.log('submitting form on the server!!! : ', submission.payload)
+	// console.log('submission: ', submission)
+	const { intent } = submission
+
+	const onboardingSteps = (await prisma.shopOnboarding.findUnique({
+		select: selectOnboardingSteps,
+		where: {
+			ownerId: userId,
+		},
+	})) as OnboardingSteps | null
+
+	//! make sure you check all your action returns to keep them consistent, if this is true, you should return ERROR
+	if (!onboardingSteps) {
+		return json({ submission })
+	}
+
+	const { steps: updatedSteps } = onboardingSteps.onboardingSteps
+	const isValidSteps = Array.isArray(updatedSteps) && updatedSteps.length === 5
+
+	const updateBusinessServices = async (
+		step: number,
+		key: string,
+		property: string,
+	) => {
+		if (isValidSteps) {
+			updatedSteps[step].shop_services = {
+				...updatedSteps[step].shop_services,
+				[key]: property,
+			}
+			onboardingSteps.onboardingSteps.steps = updatedSteps
+
+			await prisma.shopOnboarding.update({
+				where: {
+					ownerId: userId,
+				},
+				data: {
+					onboardingSteps: onboardingSteps.onboardingSteps,
+				},
+			})
+		}
+	}
+
+	switch (intent) {
+		case 'validate/title':
+			await updateBusinessServices(
+				1,
+				'title',
+				submission.payload.title as string,
+			)
+
+			break
+		case 'validate/description':
+			await updateBusinessServices(
+				1,
+				'description',
+				submission.payload.description as string,
+			)
+
+			break
+		case 'validate/price':
+			console.log(`SUBMISSION:`, submission)
+			const price = submission.payload.price as string
+			if (typeof price === 'string' && price === '') {
+				await updateBusinessServices(1, 'price', '')
+				break
+			} else {
+				const priceInCents = convertDollarsToCents(price)
+				await updateBusinessServices(1, 'price', priceInCents.toString())
+			}
+
+			break
+		case 'validate/category':
+			if (submission.payload.category === 'Select a category') {
+				await updateBusinessServices(1, 'category', '')
+			} else {
+				await updateBusinessServices(
+					1,
+					'category',
+					submission.payload.category as string,
+				)
+			}
+
+			break
+		case 'validate/custom_category':
+			await updateBusinessServices(
+				1,
+				'custom_category',
+				submission.payload.custom_category as string,
+			)
+
+			break
+		case 'validate/location':
+			await updateBusinessServices(
+				1,
+				'location',
+				submission.payload.location as string,
+			)
+		case 'validate/add_On':
+			await updateBusinessServices(
+				1,
+				'add_On',
+				submission.payload.add_On as string,
+			)
+			break
+		default:
+			break
+	}
 
 	if (!submission.value || submission.intent !== 'submit') {
 		return json({ submission } as const)
 	}
-	/*
-		 save to database
-	 then redirect to next page
 
-	ref: https://stackoverflow.com/questions/149055/how-to-format-numbers-as-currency-strings
-	
-		Please, to anyone reading this in the future, do not use float to store currency. You will loose precision and data. You should store it as a integer number of cents (or pennies etc.) and then convert prior to output. – 
-				Philip Whitehouse
- 				Mar 4, 2012 at 13:35
-	*/
-	return json({ submission } as const)
+	return redirect(
+		`/onboarding/create-services?value=${JSON.stringify(submission.value)}`,
+	)
 	// return redirect('/onboarding/get-paid')
 }
 
 export default function CreateServices() {
-	const data = useLoaderData<typeof loader>()
 	const id = useId()
+	const { categories, steps } = useLoaderData<typeof loader>()
+	const currentStep = steps[1]
+
 	const actionData = useActionData<typeof action>()
-	const [form, fields] = useForm({
+	const [
+		form,
+		{ title, description, price, category, custom_category, location, add_On },
+	] = useForm({
 		id,
-		shouldValidate: 'onSubmit',
+		shouldValidate: 'onBlur',
 		shouldRevalidate: 'onBlur',
 		constraint: getFieldsetConstraint(ServicesSchema),
 		lastSubmission: actionData?.submission,
-		onValidate({ formData }) {
-			const res = parse(formData, { schema: ServicesSchema })
-			console.log(`validating form on client: `, res)
-			return res
+		onSubmit(event, { formData, submission }) {
+			return parse(formData, { schema: ServicesSchema })
+		},
+		defaultValue: {
+			title: currentStep?.shop_services?.title ?? '',
+			description: currentStep?.shop_services?.description ?? '',
+			price: currentStep?.shop_services?.price
+				? convertCentsToDollars(currentStep?.shop_services?.price)
+				: '',
+			category: currentStep?.shop_services?.category ?? '',
+			custom_category: currentStep?.shop_services?.custom_category ?? '',
+			location: currentStep?.shop_services?.location ?? '',
+			add_On: currentStep?.shop_services?.add_On ?? '',
 		},
 	})
 
@@ -208,18 +244,91 @@ export default function CreateServices() {
 			</div>
 			<div className="space-x-4">
 				<div>
-					<Form
-						{...form.props}
-						method="post"
-						encType="multipart/form-data"
-						id="my_form"
-					>
-						<ServicesForm
-							conform={conform}
-							fields={fields}
-							categories={data}
-							form={form}
-						/>
+					<Form {...form.props} method="post" encType="multipart/form-data">
+						<div className="space-y-10">
+							<div className="grid grid-cols-1 gap-x-8 gap-y-8 p-8 shadow-sm ring-1 ring-slate-900/10 sm:rounded-lg md:grid-cols-3">
+								<ServicesPhotoDetails />
+								<div className="md:col-span-2">
+									<div className="sm:p-8 md:px-4 md:py-6">
+										<ServicesPhotos />
+									</div>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-1 gap-x-8 gap-y-8 p-8 shadow-sm ring-1 ring-slate-900/10 sm:rounded-lg md:grid-cols-3">
+								<header>
+									<h2 className="text-base font-semibold leading-7 text-slate-900">
+										Service Details
+									</h2>
+									<p className="mt-1 text-sm leading-6 text-slate-600">
+										Tell everyone how great is your service. What makes it
+										unique, and why they'll love it.
+									</p>
+								</header>
+
+								<main className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
+									<div className="sm:col-span-full">
+										<TitleInput title={title} conform={conform} />
+									</div>
+
+									<div className="sm:col-span-full">
+										<DescriptionInput
+											description={description}
+											conform={conform}
+										/>
+									</div>
+
+									<div className="sm:col-span-4">
+										<PriceInput price={price} conform={conform} />
+									</div>
+
+									<div className="sm:col-span-3">
+										<SelectCategory
+											categories={categories}
+											form={form}
+											conform={conform}
+											category={category}
+											custom_category={custom_category}
+										/>
+
+										<p
+											id={`${category.descriptionId}`}
+											className="mt-3 text-sm leading-6 text-slate-600"
+										>
+											If your service doesn't fit into one of the categories
+											above, please select 'Other' and create a custom category
+											in the input below.
+										</p>
+									</div>
+
+									<div className="sm:col-span-full">
+										<CustomCategoryInput
+											custom_category={custom_category}
+											conform={conform}
+											category={category}
+										/>
+									</div>
+								</main>
+							</div>
+							{/* Location Section */}
+							<FormWrapper
+								title="Location"
+								description="Where do you offer this service? You can add multiple
+										locations. Search by city, state, or zip code."
+							>
+								<LocationSearch location={location} form={form} />
+							</FormWrapper>
+							{/* Add On Section */}
+							<FormWrapper
+								title="Add On Services"
+								description="You can add additional add-ons to one of your main services
+										or package. For example, if you're a proposal planner, you
+										could offer a musician, a photographer, a speech template,
+										even champagne as an add-on for a fixed priced."
+							>
+								<AddOns add_On={add_On} form={form} />
+							</FormWrapper>
+						</div>
 						<div className="mt-6 flex items-center justify-end gap-x-6">
 							<button
 								type="button"
