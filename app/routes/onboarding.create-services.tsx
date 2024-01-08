@@ -78,7 +78,7 @@ export async function action(args: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ServicesSchema,
 	})
-	// console.log('submission: ', submission)
+	console.log('submission: ', submission)
 	const { intent } = submission
 
 	const onboardingSteps = (await prisma.shopOnboarding.findUnique({
@@ -121,24 +121,19 @@ export async function action(args: DataFunctionArgs) {
 
 	switch (intent) {
 		case 'validate/title':
-			await updateBusinessServices(
-				1,
-				'title',
-				submission.payload.title as string,
-			)
+			await updateBusinessServices(1, 'title', String(submission.payload.title))
 
 			break
 		case 'validate/description':
 			await updateBusinessServices(
 				1,
 				'description',
-				submission.payload.description as string,
+				String(submission.payload.description),
 			)
 
 			break
 		case 'validate/price':
-			console.log(`SUBMISSION:`, submission)
-			const price = submission.payload.price as string
+			const price = String(submission.payload.price)
 			if (typeof price === 'string' && price === '') {
 				await updateBusinessServices(1, 'price', '')
 				break
@@ -155,7 +150,7 @@ export async function action(args: DataFunctionArgs) {
 				await updateBusinessServices(
 					1,
 					'category',
-					submission.payload.category as string,
+					String(submission.payload.category),
 				)
 			}
 
@@ -164,7 +159,7 @@ export async function action(args: DataFunctionArgs) {
 			await updateBusinessServices(
 				1,
 				'custom_category',
-				submission.payload.custom_category as string,
+				String(submission.payload.custom_category),
 			)
 
 			break
@@ -172,15 +167,21 @@ export async function action(args: DataFunctionArgs) {
 			await updateBusinessServices(
 				1,
 				'location',
-				submission.payload.location as string,
+				String(submission.payload.location),
 			)
 		case 'validate/add_On':
 			await updateBusinessServices(
 				1,
 				'add_On',
-				submission.payload.add_On as string,
+				String(submission.payload.add_On),
 			)
 			break
+		case 'validate/file_upload':
+			await updateBusinessServices(
+				1,
+				'file_upload',
+				String(submission.payload.file_upload),
+			)
 		default:
 			break
 	}
@@ -199,11 +200,25 @@ export default function CreateServices() {
 	const id = useId()
 	const { categories, steps } = useLoaderData<typeof loader>()
 	const currentStep = steps[1]
+	const imagesSaved =
+		currentStep?.shop_services?.file_upload &&
+		typeof currentStep?.shop_services?.file_upload === 'string'
+			? JSON.parse(currentStep?.shop_services?.file_upload)
+			: []
 
 	const actionData = useActionData<typeof action>()
 	const [
 		form,
-		{ title, description, price, category, custom_category, location, add_On },
+		{
+			title,
+			description,
+			price,
+			category,
+			custom_category,
+			location,
+			add_On,
+			file_upload,
+		},
 	] = useForm({
 		id,
 		shouldValidate: 'onBlur',
@@ -250,7 +265,12 @@ export default function CreateServices() {
 								<ServicesPhotoDetails />
 								<div className="md:col-span-2">
 									<div className="sm:p-8 md:px-4 md:py-6">
-										<ServicesPhotos />
+										{/* Images Grid */}
+										<ServicesPhotos
+											form={form}
+											imagesSaved={imagesSaved}
+											errors={file_upload}
+										/>
 									</div>
 								</div>
 							</div>

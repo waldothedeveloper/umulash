@@ -5,7 +5,7 @@ export const ServicesPhotoDetails = () => {
 				Service Photos
 			</h2>
 			<p className="mt-1 text-sm leading-6 text-slate-600">
-				Each one of your services can have one or multiple photos. Use up to 5
+				Each one of your services can have one or multiple photos. Use up to 10
 				images to showcase the most important aspects of your service.
 			</p>
 			<div className="prose prose-sm prose-slate">

@@ -58,7 +58,7 @@ export const loader = async (args: DataFunctionArgs) => {
 
 		return json({ message: 'no places' })
 	} catch (error) {
-		console.log('error: ', error)
+		// console.log('error: ', error)
 		return json({ error: error })
 	}
 }

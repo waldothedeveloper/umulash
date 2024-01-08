@@ -34,9 +34,11 @@ export const LocationSearch = ({
 	}, [])
 
 	useEffect(() => {
-		requestIntent(form.ref.current, {
-			value: 'validate/location',
-		})
+		if (locationsArray.length > 0) {
+			requestIntent(form.ref.current, {
+				value: 'validate/location',
+			})
+		}
 	}, [locationsArray, form.ref])
 
 	useEffect(() => {

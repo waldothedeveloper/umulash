@@ -36,7 +36,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	}
 
 	try {
-		const uploadUrl = await uploadImageToCloudinary(stream, fileName as string)
+		const uploadUrl = await uploadImageToCloudinary(stream, String(fileName))
 		return uploadUrl
 	} catch (error) {
 		return json({ error })
@@ -52,7 +52,17 @@ const getUploadUrl = async (body: FormData) => {
 	return response
 }
 
-const uploadImage = async (file: File) => {
+const uploadImage = async (
+	file: File,
+): Promise<
+	| {
+			secure_url?: string
+			asset_id?: string
+			public_id?: string
+			tags: string[]
+	  }
+	| unknown
+> => {
 	const body = new FormData()
 	body.append('file', file)
 	body.append('name', file.name)
@@ -70,6 +80,16 @@ const uploadImage = async (file: File) => {
 	}
 }
 // this will receive an array of the files and upload them to cloudinary
-export const uploadImages = async (files: File[]) => {
+export const uploadImages = async (
+	files: File[],
+): Promise<
+	| {
+			secure_url?: string
+			asset_id?: string
+			public_id?: string
+			tags: string[]
+	  }
+	| unknown
+> => {
 	return await Promise.all(files.map(file => uploadImage(file)))
 }
