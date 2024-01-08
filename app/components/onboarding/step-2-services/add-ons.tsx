@@ -24,9 +24,11 @@ export default function AddOns({ add_On, form }: { add_On: any; form: any }) {
 	}, [])
 
 	useEffect(() => {
-		requestIntent(form.ref.current, {
-			value: 'validate/add_On',
-		})
+		if (addedAddOns.length > 0) {
+			requestIntent(form.ref.current, {
+				value: 'validate/add_on',
+			})
+		}
 	}, [addedAddOns, form.ref])
 
 	const handleAddon = () => {

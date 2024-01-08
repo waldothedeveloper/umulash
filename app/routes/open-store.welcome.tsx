@@ -1,7 +1,8 @@
 import type { DataFunctionArgs, LoaderFunction } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
 import { Form, useLoaderData } from '@remix-run/react'
+import { json, redirect } from '@remix-run/node'
 
+import { WelcomeImages } from '~/components/onboarding/step-1-store-name/welcome-images'
 import { checkUserID } from '~/utils/auth.server'
 import { prisma } from '~/utils/db.server'
 import { setupOnboarding } from '~/utils/shop.server'
@@ -121,47 +122,32 @@ export default function OnboardingWelcome() {
 								<div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
 									<div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-80">
 										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1513278974582-3e1b4a4fa21e?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-cyan-900/5 object-cover shadow-lg"
-											/>
+											<WelcomeImages imageName="welcome/clown" />
+
 											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-cyan-900/10" />
 										</div>
 									</div>
 									<div className="mr-auto w-44 flex-none space-y-8 sm:mr-0 sm:pt-52 lg:pt-36">
 										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-cyan-900/5 object-cover shadow-lg"
-											/>
+											<WelcomeImages imageName="welcome/wedding" />
+
 											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-cyan-900/10" />
 										</div>
 										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1622604061314-28cfb3ac2544?q=80&w=2580&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-cyan-900/5 object-cover shadow-lg"
-											/>
+											<WelcomeImages imageName="welcome/wedding_proposal" />
+
 											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-cyan-900/10" />
 										</div>
 									</div>
 									<div className="w-44 flex-none space-y-8 pt-32 sm:pt-0">
 										<div className="relative">
-											<img
-												src="https://plus.unsplash.com/premium_photo-1665454931263-3c6809394fa8?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-cyan-900/5 object-cover shadow-lg"
-											/>
+											<WelcomeImages imageName="welcome/face_painter" />
+
 											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-cyan-900/10" />
 										</div>
 										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-cyan-900/5 object-cover shadow-lg"
-											/>
+											<WelcomeImages imageName="welcome/married_couple" />
+
 											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-cyan-900/10" />
 										</div>
 									</div>

@@ -1,3 +1,10 @@
+export type FileUpload = {
+	secure_url: string
+	asset_id: string
+	public_id: string
+	tags: string[]
+}[]
+
 export type OnboardingSteps = {
 	ownerId?: string
 	onboardingSteps: {
@@ -20,6 +27,7 @@ export type OnboardingSteps = {
 					addOnPrice: string
 					id: string
 				}[]
+				file_upload?: FileUpload
 			}
 		}[]
 	}
@@ -130,4 +138,11 @@ export type addOnType = {
 	add_On: string
 	addOnPrice: string
 	id: string
+}
+
+export type CloudinaryAssets = {
+	secure_url: string
+	asset_id: string
+	public_id: string
+	tags: string[]
 }

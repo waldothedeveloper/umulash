@@ -1,24 +1,16 @@
 import type { Dispatch, SetStateAction } from 'react'
 
 import { useDropzone } from 'react-dropzone-esm'
-import { handleUploadFiles } from '~/utils/handleUploadFiles'
+import { uploadImages } from '~/routes/upload_files'
+import type { CloudinaryAssets } from '~/types'
 
 export const useInputZone = (
-	setErrorMessage: {
-		(value: SetStateAction<string>): void
-		(arg0: string): void
-	},
-	setPendingFiles: Dispatch<
-		SetStateAction<
-			File[] & {
-				secure_url?: string | undefined
-				asset_id?: string | undefined
-				public_id?: string | undefined
-			}
-		>
-	>,
+	setErrorMessage: Dispatch<SetStateAction<string>>,
+	setUploadedFiles: Dispatch<SetStateAction<CloudinaryAssets[]>>,
+	setTemporaryFiles: Dispatch<SetStateAction<File[]>>,
+	imagesSaved: CloudinaryAssets[] | undefined,
 ) => {
-	const { getRootProps, getInputProps, inputRef } = useDropzone({
+	const { getRootProps, getInputProps, inputRef, acceptedFiles } = useDropzone({
 		onFileDialogOpen() {
 			setErrorMessage('')
 		},
@@ -27,15 +19,39 @@ export const useInputZone = (
 		},
 		maxFiles: 10,
 		async onDrop(acceptedFiles) {
-			// call a fn here to upload the files to cloudinary
-			handleUploadFiles(
-				inputRef,
-				setPendingFiles,
-				setErrorMessage,
-				acceptedFiles,
-			)
+			if (inputRef.current) {
+				// remove files from the real input
+				inputRef.current.value = ''
+			}
+
+			try {
+				setTemporaryFiles(acceptedFiles)
+
+				const filesUploadedToCloudinary = (await uploadImages(
+					acceptedFiles,
+				)) as CloudinaryAssets[] | undefined
+
+				if (!filesUploadedToCloudinary) {
+					setErrorMessage('There was an error uploading your images.')
+					setTemporaryFiles([])
+
+					return
+				}
+
+				if (imagesSaved && imagesSaved.length > 0) {
+					setUploadedFiles([...imagesSaved, ...filesUploadedToCloudinary])
+				} else {
+					setUploadedFiles(filesUploadedToCloudinary)
+				}
+			} catch (error) {
+				// console.log('error on service-photos: ', error)
+				if (error instanceof Error) {
+					setErrorMessage(error?.message)
+				}
+				setTemporaryFiles([])
+			}
 		},
 	})
 
-	return { getRootProps, getInputProps }
+	return { getRootProps, getInputProps, acceptedFiles }
 }

@@ -1,5 +1,13 @@
+import type { CloudinaryAssets, addOnType } from '~/types/index'
+
 import { z } from 'zod'
-import type { addOnType } from '~/types/index'
+
+const CloudinaryAssetSchema = z.object({
+	secure_url: z.string().url().includes('res.cloudinary.com'),
+	asset_id: z.string(),
+	public_id: z.string(),
+	tags: z.array(z.string()),
+})
 
 export const ServicesSchema = z
 	.object({
@@ -37,9 +45,6 @@ export const ServicesSchema = z
 			.refine(x => Math.abs(Math.round(x * 100) - x * 100) < 0.01, {
 				message: 'The service price must have at most two decimal places',
 			}),
-		// file_upload: z
-		// 	.array(z.instanceof(File, { message: 'A valid image is required' }))
-		// 	.nonempty(),
 		location: z.string({
 			required_error: 'A service location is required',
 			invalid_type_error: 'The service location must be a string',
@@ -47,7 +52,7 @@ export const ServicesSchema = z
 	})
 	.transform(({ location }, ctx) => {
 		try {
-			const locationArray = JSON.parse(location) as string[]
+			const locationArray = JSON.parse(location)
 			if (!locationArray.length) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
@@ -134,4 +139,58 @@ export const ServicesSchema = z
 				return null
 			}
 		}),
+	)
+	.and(
+		z
+			.object({
+				file_upload: z.string(),
+			})
+			.transform(({ file_upload }, ctx) => {
+				try {
+					if (typeof file_upload === 'string' && file_upload.length > 0) {
+						const filesUploadedToCloudinary = JSON.parse(file_upload) as
+							| CloudinaryAssets[]
+							| undefined
+
+						if (
+							!filesUploadedToCloudinary ||
+							filesUploadedToCloudinary.length === 0
+						) {
+							ctx.addIssue({
+								code: z.ZodIssueCode.custom,
+								message:
+									'There was an error saving your uploaded images in our system. Please try again or contact support if this issue persists.',
+								path: ['file_upload'],
+							})
+							return null
+						}
+
+						// Validate each item in the array
+						filesUploadedToCloudinary.forEach((item, index) => {
+							const result = CloudinaryAssetSchema.safeParse(item)
+
+							if (!result.success) {
+								ctx.addIssue({
+									code: z.ZodIssueCode.custom,
+									message: `Invalid item at index ${index}: ${result.error.message}`,
+									path: ['file_upload'],
+								})
+							}
+						})
+
+						return { file_upload }
+					}
+
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'There was an error processing your request.',
+					})
+				} catch (error) {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: 'There was an error processing your request.',
+					})
+					return null
+				}
+			}),
 	)
