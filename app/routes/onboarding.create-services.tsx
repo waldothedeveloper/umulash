@@ -182,6 +182,7 @@ export async function action(args: DataFunctionArgs) {
 				'file_upload',
 				String(submission.payload.file_upload),
 			)
+			break
 		default:
 			break
 	}

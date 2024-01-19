@@ -34,12 +34,12 @@ export function GeneralErrorBoundary({
 	}
 
 	return (
-		<div>
+		<div className="text-red-500">
 			{isRouteErrorResponse(error)
 				? (statusHandlers?.[error.status] ?? defaultStatusHandler)({
 						error,
 						params,
-				  })
+					})
 				: unexpectedErrorHandler(error)}
 		</div>
 	)
