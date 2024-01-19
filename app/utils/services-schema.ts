@@ -147,44 +147,36 @@ export const ServicesSchema = z
 			})
 			.transform(({ file_upload }, ctx) => {
 				try {
-					if (typeof file_upload === 'string' && file_upload.length > 0) {
-						const filesUploadedToCloudinary = JSON.parse(file_upload) as
-							| CloudinaryAssets[]
-							| undefined
+					const filesUploadedToCloudinary = JSON.parse(file_upload) as
+						| CloudinaryAssets[]
+						| undefined
 
-						if (
-							!filesUploadedToCloudinary ||
-							filesUploadedToCloudinary.length === 0
-						) {
-							ctx.addIssue({
-								code: z.ZodIssueCode.custom,
-								message:
-									'There was an error saving your uploaded images in our system. Please try again or contact support if this issue persists.',
-								path: ['file_upload'],
-							})
-							return null
-						}
-
-						// Validate each item in the array
-						filesUploadedToCloudinary.forEach((item, index) => {
-							const result = CloudinaryAssetSchema.safeParse(item)
-
-							if (!result.success) {
-								ctx.addIssue({
-									code: z.ZodIssueCode.custom,
-									message: `Invalid item at index ${index}: ${result.error.message}`,
-									path: ['file_upload'],
-								})
-							}
+					if (
+						!filesUploadedToCloudinary ||
+						filesUploadedToCloudinary.length === 0
+					) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: 'Please upload at least one image for your service.',
+							path: ['file_upload'],
 						})
-
-						return { file_upload }
+						return null
 					}
 
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'There was an error processing your request.',
+					// Validate each item in the array
+					filesUploadedToCloudinary.forEach((item, index) => {
+						const result = CloudinaryAssetSchema.safeParse(item)
+
+						if (!result.success) {
+							ctx.addIssue({
+								code: z.ZodIssueCode.custom,
+								message: `Invalid item at index ${index}: ${result.error.message}`,
+								path: ['file_upload'],
+							})
+						}
 					})
+
+					return { file_upload }
 				} catch (error) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,

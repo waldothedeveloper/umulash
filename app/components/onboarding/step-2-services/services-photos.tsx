@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { CloudinaryAssets, FileUpload } from '~/types'
 
 import { requestIntent } from '@conform-to/react'
+import { TrashIcon } from '@heroicons/react/20/solid'
 import { PhotoIcon } from '@heroicons/react/24/outline'
 import { useInputZone } from '~/components/hooks/useInputZone'
 import { useObjectUrls } from '~/components/hooks/useObjectUrl'
@@ -46,10 +47,49 @@ export const ServicesPhotos = ({
 
 	const getObjectUrl = useObjectUrls()
 
+	const deleteImage = async (asset_id: string) => {
+		if (!asset_id) throw new Error('No asset_id provided')
+
+		try {
+			const selectedImage =
+				imagesSaved && imagesSaved.find(image => image.asset_id === asset_id)
+
+			const newImagesSaved =
+				imagesSaved && imagesSaved.filter(image => image.asset_id !== asset_id)
+
+			if (newImagesSaved) {
+				setUploadedFiles(newImagesSaved)
+			} else {
+				setUploadedFiles([])
+			}
+
+			const deletedImage = await fetch(`/delete_images`, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+				body: JSON.stringify({ public_id: selectedImage?.public_id }),
+			}).then(response => response.json())
+
+			if (deletedImage.status === 200) {
+				setErrorMessage('')
+				requestIntent(form.ref.current, {
+					value: 'validate/file_upload',
+				})
+			} else {
+				setErrorMessage(`Something went wrong. ${deletedImage.message}`)
+			}
+			return deletedImage
+		} catch (error) {
+			return error
+		}
+	}
+
 	return (
 		<>
 			<input
 				hidden
+				required
 				type="text"
 				name="file_upload"
 				value={JSON.stringify(uploadedFiles)}
@@ -67,18 +107,41 @@ export const ServicesPhotos = ({
 						>
 							Add some photos
 						</label>
-						<div className="mt-2 flex justify-center rounded-lg border border-dashed border-slate-900/25 px-6 py-10">
+						<div
+							className={
+								errorMessage || errors?.initialError['']
+									? 'mt-2 flex justify-center rounded-lg border border-dashed border-red-500 px-6 py-10'
+									: 'mt-2 flex justify-center rounded-lg border border-dashed border-slate-900/25 px-6 py-10'
+							}
+						>
 							<div className="text-center">
 								<PhotoIcon
-									className="mx-auto h-12 w-12 text-slate-300"
+									className={
+										errorMessage || errors?.initialError['']
+											? 'mx-auto h-12 w-12 text-red-300'
+											: 'mx-auto h-12 w-12 text-slate-300'
+									}
 									aria-hidden="true"
 								/>
-								<div className="mt-4 flex text-sm leading-6 text-slate-600">
+								<div
+									className={
+										errorMessage || errors?.initialError['']
+											? 'mt-4 flex text-sm leading-6 text-red-500'
+											: 'mt-4 flex text-sm leading-6 text-slate-600'
+									}
+								>
 									<label
 										htmlFor="file-upload"
 										className="relative cursor-pointer rounded-md bg-white font-semibold text-cyan-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-cyan-600 focus-within:ring-offset-2 hover:text-cyan-500"
 									>
-										<span>Upload photos</span>
+										<span
+											className={
+												errorMessage ||
+												(errors?.initialError[''] && 'text-red-500')
+											}
+										>
+											Upload photos
+										</span>
 										<input
 											{...getInputProps()}
 											id="file-upload"
@@ -89,7 +152,13 @@ export const ServicesPhotos = ({
 									</label>
 									<p className="pl-1">or drag and drop</p>
 								</div>
-								<p className="text-xs leading-5 text-slate-600">
+								<p
+									className={
+										errorMessage || errors.initialError['']
+											? 'text-xs leading-5 text-red-500'
+											: 'text-xs leading-5 text-slate-600'
+									}
+								>
 									PNG, JPG, GIF up to 10MB
 								</p>
 							</div>
@@ -102,7 +171,16 @@ export const ServicesPhotos = ({
 					imagesSaved.length > 0 &&
 					imagesSaved.map(file => {
 						return (
-							<div key={file.asset_id}>
+							<div className="relative" key={file.asset_id}>
+								<div className="absolute right-0 p-2">
+									<button
+										onClick={async () => await deleteImage(file.asset_id)}
+										type="button"
+										className="rounded-full bg-slate-100 p-1.5 text-slate-800 opacity-90 shadow-sm hover:bg-red-500 hover:text-white hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+									>
+										<TrashIcon className="h-4 w-4" aria-hidden="true" />
+									</button>
+								</div>
 								<CloudinaryImageComponent imgSrc={file.public_id} />
 							</div>
 						)
@@ -128,7 +206,9 @@ export const ServicesPhotos = ({
 					/>
 				) : null}
 			</div>
-			<p className="mt-6 text-sm text-red-500">{errorMessage}</p>
+			<p className="mt-6 text-sm text-red-500">
+				{errorMessage || errors?.initialError['']}
+			</p>
 		</>
 	)
 }

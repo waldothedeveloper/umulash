@@ -1,16 +1,23 @@
+import { json, redirect } from '@remix-run/node'
+
 import type { ActionFunctionArgs } from '@remix-run/node'
 import type { UploadApiResponse } from 'cloudinary'
+import { checkUserID } from '~/utils/auth.server'
 // write a remix loader function that will upload the file by calling upload_tocloudinary function from the utils folder to cloudinary and return the url
-import { json } from '@remix-run/node'
 import { uploadImageToCloudinary } from '~/utils/upload_to_cloudinary.server'
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-	if (request.method !== 'POST') {
+export const action = async (args: ActionFunctionArgs) => {
+	const userId = await checkUserID(args)
+	if (!userId) {
+		return redirect('/')
+	}
+
+	if (args.request.method !== 'POST') {
 		return json({ message: 'Method not allowed' }, { status: 405 })
 	}
 
 	//
-	const formData = await request.formData()
+	const formData = await args.request.formData()
 	const upload = formData.get('file')
 	const fileName = formData.get('name')
 
