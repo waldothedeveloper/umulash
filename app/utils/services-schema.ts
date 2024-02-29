@@ -53,7 +53,8 @@ export const ServicesSchema = z
 	.transform(({ location }, ctx) => {
 		try {
 			const locationArray = JSON.parse(location)
-			if (!locationArray.length) {
+
+			if (!locationArray.length || locationArray.length === 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: 'Please add at least one location for your service',
@@ -67,6 +68,7 @@ export const ServicesSchema = z
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: 'There was an error processing your request.',
+				path: ['location'],
 			})
 			return null
 		}

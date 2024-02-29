@@ -17,9 +17,9 @@ export const FormWrapper = ({
 				</h2>
 				<p className="mt-1 text-sm leading-6 text-slate-600">{description}</p>
 			</header>
-			<main className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
+			<div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
 				<div className="col-span-full">{children}</div>
-			</main>
+			</div>
 		</div>
 	)
 }
