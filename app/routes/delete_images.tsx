@@ -1,8 +1,8 @@
 import { json, redirect } from '@remix-run/node'
 
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { checkUserID } from '~/utils/auth.server'
 import { v2 as cloudinary } from 'cloudinary'
+import { checkUserID } from '~/utils/auth.server'
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -31,16 +31,16 @@ export const action = async (args: ActionFunctionArgs) => {
 			.destroy(public_id, { invalidate: true })
 			.then(result => result)
 
-		if (deletedAsset && deletedAsset.result === 'ok') {
-			return json({ message: 'ok', status: 200 })
+		if (deletedAsset && deletedAsset.result !== 'ok') {
+			return json({
+				message: `The image could not be deleted due to: ${deletedAsset?.result}`,
+				status: 500,
+			})
 		}
 
-		return json(
-			{ message: `The image could not be deleted. ${deletedAsset}` },
-			{ status: 400 },
-		)
+		return json({ message: 'ok', status: 200 })
 	} catch (error) {
-		console.log(error)
+		console.log(`error deleting images`, error)
 		return json({ message: error, status: 500 })
 	}
 }

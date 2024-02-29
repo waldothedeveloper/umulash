@@ -14,7 +14,17 @@ export const LocationSearch = ({
 	location,
 }: {
 	form: any
-	location: any
+	location: {
+		defaultValue: string
+		descriptionId: string
+		error: string
+		errorId: string
+		errors: string[]
+		id: string
+		initialError: { message: string }
+		name: string
+		required: boolean
+	}
 }) => {
 	const [locationsArray, setLocationsArray] = useState<
 		GooglePlaceDisplayData[]
@@ -25,28 +35,34 @@ export const LocationSearch = ({
 	let fetcher = useFetcher<GooglePlaceDisplayData | { message: string }>()
 	const { data, state } = fetcher
 
-	useEffect(() => {
-		if (location.defaultValue) {
-			const locationFromLoader = JSON.parse(location.defaultValue)
+	useEffect(function syncServerDataToLocalData() {
+		const locationFromLoader = location?.defaultValue
+			? JSON.parse(location.defaultValue)
+			: []
+		if (Array.isArray(locationFromLoader) && locationFromLoader.length > 0) {
 			setLocationsArray(locationFromLoader)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	useEffect(() => {
-		if (locationsArray.length > 0) {
+	useEffect(
+		function submitLocationValue() {
 			requestIntent(form.ref.current, {
 				value: 'validate/location',
 			})
-		}
-	}, [locationsArray, form.ref])
+		},
+		[locationsArray, form.ref],
+	)
 
-	useEffect(() => {
-		if (query.length > 0) {
-			fetcher.load(`/address_search/autocomplete?search=${query}`)
-		}
+	useEffect(
+		function searchLocation() {
+			if (query.length > 0) {
+				fetcher.load(`/address_search/autocomplete?search=${query}`)
+			}
+		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [query])
+		[query],
+	)
 
 	return (
 		<div>
@@ -59,7 +75,12 @@ export const LocationSearch = ({
 					&nbsp;*
 				</span>
 			</div>
-			<HiddenLocationInputs locationsArray={locationsArray} />
+			<HiddenLocationInputs
+				locationsArray={locationsArray}
+				serverLocations={
+					location?.defaultValue ? JSON.parse(location.defaultValue) : []
+				}
+			/>
 			<div className="mt-2 flex flex-col justify-between md:flex-row">
 				<Combobox value={selected} onChange={setSelected}>
 					<div className="relative mt-1 w-full">
@@ -214,6 +235,7 @@ export const LocationSearch = ({
 			<LocationTable
 				locations={locationsArray}
 				setLocation={setLocationsArray}
+				form={form}
 			/>
 		</div>
 	)

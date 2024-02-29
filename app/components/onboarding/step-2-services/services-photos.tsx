@@ -31,19 +31,23 @@ export const ServicesPhotos = ({
 		imagesSaved,
 	)
 
-	useMemo(() => {
-		if (imagesSaved && imagesSaved.length === uploadedFiles.length) {
-			setTemporaryFiles([])
-		}
-	}, [imagesSaved, uploadedFiles])
+	useMemo(
+		function removeTemporaryFiles() {
+			if (imagesSaved && imagesSaved.length === uploadedFiles.length) {
+				setTemporaryFiles([])
+			}
+		},
+		[imagesSaved, uploadedFiles],
+	)
 
-	useEffect(() => {
-		if (uploadedFiles.length > 0) {
+	useEffect(
+		function saveFiles() {
 			requestIntent(form.ref.current, {
 				value: 'validate/file_upload',
 			})
-		}
-	}, [uploadedFiles, form.ref])
+		},
+		[uploadedFiles, form.ref],
+	)
 
 	const getObjectUrl = useObjectUrls()
 
@@ -57,7 +61,7 @@ export const ServicesPhotos = ({
 			const newImagesSaved =
 				imagesSaved && imagesSaved.filter(image => image.asset_id !== asset_id)
 
-			if (newImagesSaved) {
+			if (newImagesSaved && newImagesSaved?.length > 0) {
 				setUploadedFiles(newImagesSaved)
 			} else {
 				setUploadedFiles([])
@@ -70,6 +74,7 @@ export const ServicesPhotos = ({
 				method: 'POST',
 				body: JSON.stringify({ public_id: selectedImage?.public_id }),
 			}).then(response => response.json())
+			console.log('deletedImage: ', deletedImage)
 
 			if (deletedImage.status === 200) {
 				setErrorMessage('')
@@ -92,7 +97,12 @@ export const ServicesPhotos = ({
 				required
 				type="text"
 				name="file_upload"
-				value={JSON.stringify(uploadedFiles)}
+				// value={JSON.stringify(uploadedFiles)}
+				value={
+					!uploadedFiles.length
+						? JSON.stringify(imagesSaved)
+						: JSON.stringify(uploadedFiles)
+				}
 				readOnly
 				onChange={() => void 0}
 			/>
@@ -106,6 +116,16 @@ export const ServicesPhotos = ({
 							className="block text-sm font-medium leading-6 text-slate-900"
 						>
 							Add some photos
+							<span
+								className={
+									errorMessage || errors?.initialError['']
+										? 'text-red-500'
+										: 'text-slate-900'
+								}
+								aria-hidden="true"
+							>
+								&nbsp;*
+							</span>
 						</label>
 						<div
 							className={

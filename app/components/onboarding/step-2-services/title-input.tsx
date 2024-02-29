@@ -4,7 +4,6 @@ interface TitleInputProps {
 	required?: boolean
 	minlength?: number
 	maxlength?: number
-	// other props...
 }
 
 export const TitleInput: React.FC<TitleInputProps> = ({ title, conform }) => {

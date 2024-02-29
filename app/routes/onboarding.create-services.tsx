@@ -94,6 +94,7 @@ export async function action(args: DataFunctionArgs) {
 	}
 
 	const { steps: updatedSteps } = onboardingSteps.onboardingSteps
+
 	const isValidSteps = Array.isArray(updatedSteps) && updatedSteps.length === 5
 
 	const updateBusinessServices = async (
@@ -164,11 +165,13 @@ export async function action(args: DataFunctionArgs) {
 
 			break
 		case 'validate/location':
-			await updateBusinessServices(
-				1,
-				'location',
-				String(submission.payload.location),
-			)
+			if (submission.payload.location) {
+				await updateBusinessServices(
+					1,
+					'location',
+					String(submission.payload.location),
+				)
+			}
 		case 'validate/add_On':
 			await updateBusinessServices(
 				1,
@@ -189,18 +192,28 @@ export async function action(args: DataFunctionArgs) {
 
 	if (!submission.value || submission.intent !== 'submit') {
 		return json({ submission } as const)
-	}
+	} else {
+		// update the step in the database as completed
+		updatedSteps[1].status = 'complete'
+		updatedSteps[2].status = 'current'
 
-	return redirect(
-		`/onboarding/create-services?value=${JSON.stringify(submission.value)}`,
-	)
-	// return redirect('/onboarding/get-paid')
+		await prisma.shopOnboarding.update({
+			where: {
+				ownerId: userId,
+			},
+			data: {
+				onboardingSteps: { steps: updatedSteps },
+			},
+		})
+		return redirect('/onboarding/get-paid')
+	}
 }
 
 export default function CreateServices() {
 	const id = useId()
 	const { categories, steps } = useLoaderData<typeof loader>()
 	const currentStep = steps[1]
+
 	const imagesSaved =
 		currentStep?.shop_services?.file_upload &&
 		typeof currentStep?.shop_services?.file_upload === 'string'
@@ -208,6 +221,7 @@ export default function CreateServices() {
 			: []
 
 	const actionData = useActionData<typeof action>()
+
 	const [
 		form,
 		{
@@ -226,6 +240,7 @@ export default function CreateServices() {
 		shouldRevalidate: 'onBlur',
 		constraint: getFieldsetConstraint(ServicesSchema),
 		lastSubmission: actionData?.submission,
+
 		onSubmit(event, { formData, submission }) {
 			return parse(formData, { schema: ServicesSchema })
 		},
