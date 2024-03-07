@@ -15,7 +15,7 @@ export default defineConfig({
 		remixDevTools(),
 		remix({
 			ignoredRouteFiles: ['**/*.css'],
-			presets: [vercelPreset],
+			presets: [vercelPreset()],
 		}),
 		tsconfigPaths(),
 	],
