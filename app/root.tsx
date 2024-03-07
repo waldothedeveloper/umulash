@@ -2,7 +2,6 @@ import { ClerkApp, ClerkErrorBoundary } from '@clerk/remix'
 import type { LinksFunction, LoaderFunction } from '@remix-run/node'
 import {
 	Links,
-	LiveReload,
 	Meta,
 	Outlet,
 	Scripts,
@@ -12,7 +11,7 @@ import {
 
 import { rootAuthLoader } from '@clerk/remix/ssr.server'
 import { GeneralErrorBoundary } from '~/components/error-boundary'
-import styles from './tailwind.css'
+import styles from './tailwind.css?url'
 
 export const loader: LoaderFunction = args => {
 	return rootAuthLoader(args, ({ request }) => {
@@ -52,7 +51,7 @@ function Document({ children }: { children: React.ReactNode }) {
 
 				<ScrollRestoration />
 				<Scripts />
-				<LiveReload />
+				{/* <LiveReload /> */}
 			</body>
 		</html>
 	)
